@@ -11,6 +11,8 @@ These concepts matter, because they will make your research:
 - easier to understand,
 - and more.
 
+Along the way, we will have a small toy example illustrating what we are doing and actually shipping it, so that you can examine the example and learn from it.
+
 ## Motivating example
 
 Imagine this. You have been working really hard on your research project for maybe a year, and finally, you figure out what was missing and find interesting results. Your project is contained in one folder, with the following structure:
