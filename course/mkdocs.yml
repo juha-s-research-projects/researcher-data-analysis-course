@@ -1,1 +1,17 @@
 site_name: My Docs
+theme:
+   name: material
+nav:
+  - Home: index.md
+  - Architecture: architecture.md
+  - Hygiene: hygiene.md
+  - Storage: storage.md
+  - SQL: sql.md
+  - Coding: coding.md
+  - Version control: version-control.md
+  - Documentation: documentation.md
+  - Documentation: documentation.md
+  - LLMs: llms.md
+  - Performance: performance.md
+  - Server: server.md
+  - Datahub: datahub.md
