@@ -1,0 +1,87 @@
+# Zensical configuration — https://zensical.org/docs/setup/
+# (Replaces the former mkdocs.yml; Zensical is built by the Material for
+#  MkDocs team. docs_dir defaults to "docs", same layout as before.)
+
+[project]
+site_name = "My Docs"
+
+# Explicit navigation. Drop this block to let Zensical derive the nav from
+# the docs/ directory structure instead.
+nav = [
+  { "Home" = "index.md" },
+  { "Architecture" = "architecture.md" },
+  { "Hygiene" = "hygiene.md" },
+  { "Storage" = "storage.md" },
+  { "SQL" = "sql.md" },
+  { "Coding" = "coding.md" },
+  { "Version control" = "version-control.md" },
+  { "Documentation" = "documentation.md" },
+  { "Manuscript pipeline" = "manuscript-pipeline.md" },
+  { "LLMs" = "llms.md" },
+  { "Performance" = "performance.md" },
+  { "Server" = "server.md" },
+  { "Datahub" = "datahub.md" },
+  { "Capstone" = "capstone.md" },
+]
+
+[project.theme]
+# Use "classic" for the traditional Material for MkDocs look.
+#variant = "classic"
+language = "en"
+features = [
+  "content.code.annotate",
+  "content.code.copy",
+  "navigation.footer",
+  "navigation.indexes",
+  "navigation.instant",
+  "navigation.top",
+  "navigation.tracking",
+  "search.highlight",
+  "toc.follow",
+]
+
+# Light / dark mode toggle.
+[[project.theme.palette]]
+scheme = "default"
+toggle.icon = "lucide/sun"
+toggle.name = "Switch to dark mode"
+
+[[project.theme.palette]]
+scheme = "slate"
+toggle.icon = "lucide/moon"
+toggle.name = "Switch to light mode"
+
+# Markdown extensions. These power admonitions/callouts, code copy buttons,
+# syntax highlighting, content tabs and mermaid fenced blocks — all of which
+# this course's code- and diagram-heavy chapters rely on.
+[project.markdown_extensions.abbr]
+[project.markdown_extensions.admonition]
+[project.markdown_extensions.attr_list]
+[project.markdown_extensions.def_list]
+[project.markdown_extensions.footnotes]
+[project.markdown_extensions.md_in_html]
+[project.markdown_extensions.toc]
+permalink = true
+[project.markdown_extensions.pymdownx.betterem]
+[project.markdown_extensions.pymdownx.caret]
+[project.markdown_extensions.pymdownx.details]
+[project.markdown_extensions.pymdownx.emoji]
+emoji_generator = "zensical.extensions.emoji.to_svg"
+emoji_index = "zensical.extensions.emoji.twemoji"
+[project.markdown_extensions.pymdownx.highlight]
+anchor_linenums = true
+line_spans = "__span"
+pygments_lang_class = true
+[project.markdown_extensions.pymdownx.inlinehilite]
+[project.markdown_extensions.pymdownx.keys]
+[project.markdown_extensions.pymdownx.mark]
+[project.markdown_extensions.pymdownx.superfences]
+custom_fences = [
+  { name = "mermaid", class = "mermaid", format = "pymdownx.superfences.fence_code_format" }
+]
+[project.markdown_extensions.pymdownx.tabbed]
+alternate_style = true
+combine_header_slug = true
+[project.markdown_extensions.pymdownx.tasklist]
+custom_checkbox = true
+[project.markdown_extensions.pymdownx.tilde]
