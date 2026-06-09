@@ -1,7 +1,3 @@
-<!-- SCAFFOLD — ideas/topics only. Author writes these bullets into prose.
-Per-module shape: Concept → Why it bites (failure story) → What we
-recommend (one opinionated answer) → A taste (short example) → Go deeper. -->
-
 # Data hygiene
 
 When you download data from different sources and harmonize them to fit the whole analysis, there are loads of choices to make.
@@ -138,4 +134,4 @@ Remember that
 - Try to pick conventions for variable names and variable values, document these and follow the tidy principles for your data tables.
 - Following these steps makes your work easier to follow, your arguments look more professional as well as more credible, and easier for the whole world to listen to and be interested in.
 
-The next sections will tell about the practicalities of storing your data in a database, as well as how you should write your code.
+## Let's continue with our example

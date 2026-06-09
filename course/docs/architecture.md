@@ -7,29 +7,6 @@ In this chapter we will outline the project architecture with a suggested struct
 When working with a research project, the output should never be a single file, like a single PDF, word, or excel file. The output should always be a directory of files. Handing over a self contained directory with instructions on how to run it and all information that is needed will always be cleaner than having a pdf, and lots of explanation of the process. Showing the source files will always be easier, and more professional. On top of that, you can just zip the project, hand it to somebody else, that other person will see a well structured, clean artefact that looks professional, instead of a mess of explanations on how to reproduce and some single files.
 In principle, you should be able to send one .zip, with no additional explanations or tutorials given, and the directory will still have everything somebody needs for whatever they are interested in.
 
-<!-- Author — synthesis to weave into this section, your voice:
-- A project has TWO forms. LIVE: what you work in daily — modular, Zotero
-  and Overleaf are external tools, git stays lean. SEALED: an archive/
-  backup/hand-off — self-contained, external deps materialized in
-  (incl. cited PDFs). The "one zip, nothing stray" promise is the SEALED
-  principle; keeping git lean is a LIVE concern. Not a contradiction —
-  different operations. Name the trade openly: modularity / low switching
-  cost vs self-containment; the live→sealed lifecycle is the resolution,
-  not picking a side.
-- Trap to teach: `.gitignore` does NOT exclude files from a zip of the
-  working dir. `zip -r` ships git-ignored content too. "Ignored by git"
-  ≠ "won't leave with the archive" — know which operation you're doing
-  and what physically travels.
-- Copyright splits on DIRECTION, not storage: copyrighted PDFs in your
-  PRIVATE backup = fine; redistribution (public repo, sending to a person,
-  journal replication package) = not — strip to .bib/DOIs. Canonical
-  reference form is the bibliography/DOIs; sealed PRIVATE archives may
-  additionally bundle the PDFs.
-- Zotero is a CAREER-WIDE library (notes/tags/search across everything you
-  ever read, its own sync), NOT per-project. Instruct this explicitly.
-  The only reference artifact that enters a project repo is the exported
-  paper/references.bib. Setup mechanics: manuscript-pipeline chapter. -->
-
 
 ## Data flows one direction
 
@@ -60,11 +37,6 @@ A rule of thumb could be asking yourself, "If I delete this, can it be regenerat
 This raises an apparent exception: later, our script pushes the generated tables and figures to Overleaf. That is not a second job piled onto *this* project's version control — Overleaf simply exposes its own, separate git repository as the only way to deliver files into it. Treat it as a transport pipe that happens to speak git, kept as a separate concern from the version history that lives here.
 Our script will use git to tell Overleaf "hey, the graphs and tables changed, here are the newest ones", which Overleaf can then use to make a new PDF with those updated numbers.
 
-<!-- Author: canonical position in COURSE-NOTES — manuscript transport is
-its own slot; the git-bridge is a vendor-forced wart confined to it;
-local compile is an untaught one-line signpost. version-control.md and
-manuscript-pipeline.md must tell this same story, not re-derive it. -->
-
 
 ```text
 phd-project/
@@ -72,7 +44,7 @@ phd-project/
 ├── pyproject.toml             # declared dependencies + project metadata
 ├── uv.lock                    # exact, fully pinned dependency graph
 ├── .python-version            # pinned interpreter (e.g. 3.12)
-├── .gitignore                 # ignores the venv, caches, build artefacts
+├── .gitignore                 # ignores the venv, caches, build artefacts from git
 ├── run.sh                     # ONE command: env → db → analysis → outputs
 │
 ├── data/
