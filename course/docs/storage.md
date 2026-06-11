@@ -44,13 +44,13 @@ Anything that is the raw, original data should never be stored in a spreadsheet 
 - **A single-file database** — query without loading everything into memory, a schema, multiple related tables in one file. This is the working store. A copy could even be easily sent to somebody else as needed, as the database is contained in the single file!
 
 CSV and Parquet are popular choices for sending data from one person to the other. The database should be where it lives and is processed as well as analyzed.
+Proper databases also have atomic inserts, which means that if something bad happens whilst in the middle of writing the file, the rest of the data will be guaranteed to be unaltered if the transaction does not go through OR if it goes through, it goes through successfully. A proper database also makes relations explicit instead of implicit across many files.
 
-The difference is not academic. Below is the time to answer one realistic question — a filtered group-by aggregation — over the same data held four ways, as the row count grows. The files are re-read on every query (a pile of files has no other option); SQLite is loaded once, indexed, and then queried. Note the log scale on both axes.
+This difference is not small, and matters significantly. Below are plotted times for a filtered group-by aggregation, over the same data as the row count grows. The files are re-read on every query (as that is how polars works), SQLite is loaded once, indexed and queried. Notice the log scale on the axes
 
 ![Time to answer one aggregate query versus dataset size, for CSV, Parquet, Excel and SQLite](assets/storage-benchmark.png)
 
-The contrast that matters is Excel against everything else. At a million rows it already needs around thirty seconds to answer, and beyond its ~1.05-million-row limit it cannot open the data at all. The other three barely notice the scale: at ten million rows Parquet scanned lazily with polars answers in about twenty milliseconds, and an indexed SQLite or a CSV scan in under a fifth of a second. Operations like these might be performed multiple times in your research pipeline, so seconds matter here.
-
+The most important thing is Excel agaisnt everything else. The other solutions are quite close to each other in performance. But Excel is in its own league in a bad way, where a million rows already takes around 30 seconds to answer, and when we surpass a million rows, it will not open the data file at all. The other options barely budge at the scale. Operations like these might be performed multiple times in your research pipeline, so seconds matter here.
 
 ## The recommendation: SQLite, one single-file store
 
@@ -63,7 +63,7 @@ For a researcher, one way to use an SQLite database would be to have a copy of y
 
 ## A taste
 
-SQLite can't read a CSV in pure SQL, so you bring data in once with pandas (or the `sqlite3` CLI's `.import`), then query the store from then on. In this example we read a copy of the famous Fama-French website factor data as a raw copy, clean it to a sensible format, store both the clean and raw version so that it is ready for later analysis.
+SQLite can't read a CSV in pure SQL, so you bring data in once with pandas (or the `sqlite3` CLI's `.import`) — which is exactly what `01_load_raw.py` already did in the hygiene chapter. That one-time landing is behind us: `data/project.sqlite` now holds the raw copies next to the clean tables, with `panel` ready for analysis. From here on, every script just opens the store and asks it questions, instead of re-reading and re-joining a pile of files.
 
 ```python
 import sqlite3
@@ -71,20 +71,25 @@ import pandas as pd
 
 con = sqlite3.connect("data/project.sqlite")
 
-# 1. land raw, as-is — here the file is already a clean rectangle, but
-#    many files (e.g. the Fama-French ones) need real code to carve out first
-pd.read_csv("data/raw/USREC.csv").to_sql("recession_raw", con, if_exists="replace", index=False)
+# the store knows what it contains — no directory archaeology needed
+pd.read_sql("SELECT name FROM sqlite_master WHERE type = 'table'", con)
+#   factors_raw, industry_raw, recession_raw      <- raw, as landed
+#   factors, industry_returns, recession, panel   <- cleaned + derived
 
-# 2. derive a clean table from the raw one, once
-con.execute("""
-    CREATE TABLE recession AS
-    SELECT substr(observation_date, 1, 7) || '-01' AS month,
-           CAST(USREC AS INTEGER)                  AS recession
-    FROM recession_raw
-""")
-
-# 3. from here on, just ask the store your questions
-pd.read_sql("SELECT count(*) FROM recession WHERE recession = 1", con)
+# ask a question without loading everything into memory:
+# how do industry returns look in recession months vs normal months?
+pd.read_sql("""
+    SELECT industry,
+           AVG(CASE WHEN recession = 1 THEN ret END) AS ret_recession,
+           AVG(CASE WHEN recession = 0 THEN ret END) AS ret_normal
+    FROM panel
+    GROUP BY industry
+    ORDER BY industry
+""", con)
+#   Durbl  -0.0025  0.0146     <- most industries flip negative in recessions —
+#   Enrgy  -0.0049  0.0135        a first taste of what the regression will
+#   Hlth    0.0071  0.0113        formalize in a later chapter
+#   ...
 ```
 
-This raw-then-clean shape is exactly what the running example does across `01_load_raw.py` and `02_clean.py` — see [coding](coding.md).
+Notice what we did *not* do: re-download, re-parse the messy files, or re-derive the clean tables. `01_load_raw.py` landed the raw files as `*_raw`, `02_clean.py` derived the clean ones — once. Everything later in the course just queries this one file.
