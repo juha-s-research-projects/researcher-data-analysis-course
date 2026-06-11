@@ -53,7 +53,7 @@ The four principles stay the same in different languages, but the tools might ch
 | R project | renv (+ rig to pin the R version) |
 | Mixed-language / heavy native deps / CUDA userspace | Pixi (conda-forge) |
 | Stata | no env manager — pin the Stata version, vendor the `.ado` files, script everything in `.do` |
-| Bit-for-bit reproducibility across anything (incl. proprietary) | a container (Docker; **Apptainer** on HPC — see [server](server.md)) |
+| Bit-for-bit reproducibility across anything (incl. proprietary) | a container (Docker) |
 
 ## Small example of using an environment manager
 
