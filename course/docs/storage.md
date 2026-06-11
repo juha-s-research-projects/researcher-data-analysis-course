@@ -61,6 +61,10 @@ The big benefit is also that SQL is the standard query language used very widely
 
 For a researcher, one way to use an SQLite database would be to have a copy of your raw, cleaned as well as derived data there, so that your scripts write into it and query from it, and the file is part of the project (when exported) but not tracked by git (git is not meant for bigger files than code files).
 
+## DB browser for SQLite
+
+A bonus program is called [DB browser for SQLite](https://sqlitebrowser.org/): it allows you to inspect your sqlite database in a graphical format, I highly recommend it, when you want to inspect your database quickly to see how it looks like at the current moment. 
+
 ## SQLite extensions
 
 You should start off with no extensions, to make it so that your setup is not more complicated than you need to.
