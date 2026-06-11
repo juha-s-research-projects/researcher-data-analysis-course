@@ -122,7 +122,7 @@ I recommend you to do the following:
 - You should document and list the exact meaning of variables and their units to your own short documentation to make it easier for others to follow along (including your future-self).
 
 You should also consider values. 
-For dates, use `YYYY-MM-DD` always as it sorts correctly as text, is unambiguous to everybody. 
+For dates, use `YYYY-MM-DD` always as it sorts correctly as text, and is unambiguous to everybody. 
 For country codes you can do something similar: instead of `Finland` / `finland` / `FIN` / `FI` you can stick to one convention, like `FI`/`FR`/`DE`/`CH` (ISO 3166-1 A-2).
 For missing data: remember to be intentional about your codes. Blank vs `NA` vs `999` vs `-1` vs `N/A` should not be used interchangeably. Many times you might have missing data due to many different reasons, like "missing" (no response in a survey), "zero" (numerical value of zero) or "not applicable" (the hair colour of a bald person).
 
@@ -135,3 +135,163 @@ Remember that
 - Following these steps makes your work easier to follow, your arguments look more professional as well as more credible, and easier for the whole world to listen to and be interested in.
 
 ## Let's continue with our example
+
+- The architecture chapter left us with a scaffolded `phd-project/`: folders, empty pipeline files, a stub `run.sh`, first commits. Now the project gets its actual data.
+- The toy study (so the data choices make sense): does an industry's monthly return move with the overall market, and does the relationship change in recessions? Industry portfolio returns regressed on the market factor, recession dummy as a control. We will make the regression in a later chapter, the following example is about giving that a clean starting point.
+
+For our example, we pick three freely available sources that are from different data providers to illustrate the harmonization for real:
+    - **Fama-French 3 factors** (monthly) — Kenneth French's data library. The market return we regress on.
+    - **10 industry portfolios** (monthly) — same library. The returns we explain.
+    - **USREC** — NBER recession indicator via FRED. The control variable.
+
+
+
+### Step 0: fetch in code, then freeze
+
+The following examples fetch the files in code. 
+This is one way to do it, quite tedious, a more realistic way to do it would be to just go and click download, and diligently document the source upon downloading.
+After downloading, crucially also setting the file permissions to read only. Doing this in code has the benefit that the code file functions as the documentation, we do not really need a separate documentation.
+When downloading files, the most important thing is that A) you know and document where you got the files from (url and timestamp) and B) you set the files to read only as the first thing after saving them to the desired location.
+
+The below code does all the steps needed. Notice, that we put the raw data folder files to .gitignore: this means they are not tracked by git, and if we link the repo to somebody else, we do not accidentally redistribute the files, as with these files their licence allows free use but not redistribution. We add the script to git anyway. Remember that if you later just share your project folder as a compressed zip, the data in the raw section will be included, and thus you might redistribute the data. Make sure you have a permission to distribute it, or otherwise make sure you know what licence terms you are breaking and the risks you assume doing this.
+
+```python
+# src/00_fetch.py  (condensed — full provenance lives in the file's docstring)
+SOURCES = {
+    # name in data/raw  ->  (kind, url)
+    "F-F_Research_Data_Factors.csv": ("zip", "https://mba.tuck.dartmouth.edu/...zip"),
+    "10_Industry_Portfolios.csv":    ("zip", "https://mba.tuck.dartmouth.edu/...zip"),
+    "USREC.csv":                     ("csv", "https://fred.stlouisfed.org/graph/fredgraph.csv?id=USREC"),
+}
+
+READ_ONLY = stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH   # r--r--r--
+
+for name, (kind, url) in SOURCES.items():
+    dest = RAW / name
+    if dest.exists():
+        continue                  # already fetched: never re-touch raw
+    blob = _download(url)         # (zips are unpacked to the inner csv)
+    dest.write_bytes(blob)
+    dest.chmod(READ_ONLY)         # freeze: raw is immutable from here on
+```
+
+- After one run, the evidence locker looks like this — note the `r--r--r--`:
+
+```text
+$ uv run src/00_fetch.py && ls -l data/raw/
+-r--r--r--  1 alexis alexis 493812  10_Industry_Portfolios.csv
+-r--r--r--  1 alexis alexis  52333  F-F_Research_Data_Factors.csv
+-r--r--r--  1 alexis alexis  26777  USREC.csv
+```
+
+- And `.gitignore` grows one line (data not redistributable + regenerable from the script — both reasons point the same way):
+
+```gitignore
+data/raw/
+```
+
+### Now look at what we actually downloaded
+
+<!-- Talking points: this is the chapter's "messy data" section made concrete.
+     Every sin below maps to a section above — name the mapping in prose. -->
+
+- These files are formatted for humans reading them on a website, not for machines. The factors file, verbatim:
+
+```text
+This file was created using the 202604 CRSP database.
+The 1-month TBill rate data until 202405 are from Ibbotson Associates. ...
+
+,Mkt-RF,SMB,HML,RF
+192607,   2.89,  -2.55,  -2.39,   0.22
+192608,   2.64,  -1.14,   3.81,   0.25
+```
+
+- The catalogue of sins, per file:
+    - **Factors:** prose preamble before the data; dates as `192607` (`YYYYMM`); returns in percent (`2.89` means 2.89%); and a *second* table ("Annual Factors") stacked further down in the same file.
+    - **Industry portfolios:** all of the above, plus the data is **wide** (one column per industry — one row is ten observations, not one), plus *six* tables stacked in one file (value-weighted, equal-weighted, annual, firm size, ...), plus `-99.99` / `-999` as missing-value codes.
+    - **USREC:** actually tidy (FRED is machine-friendly) — but it speaks a different dialect: dates as `1854-12-01`, a column named `USREC`. Harmless alone; a join key mismatch the moment we combine it with the French data. This is the harmonization problem in miniature.
+
+### Let's load the data
+
+<!-- Talking points -->
+
+- `01_load_raw.py` has one job: extract the one block we want out of each file and put it in the database as-is, into tables suffixed `_raw`. Units, dates, missing codes, shape — all still wrong, at this point. Loading and cleaning are separate steps, so when something looks odd later you can ask the database "what did the source actually say?" without re-opening the messy file.
+- A taste of the extraction — the monthly rows are exactly the ones whose first field is a 6-digit `YYYYMM`, which quietly skips both the preamble and the stacked annual block:
+
+```python
+# src/01_load_raw.py — keep only the monthly block of the factors file
+rows = [l.split(",") for l in lines if re.match(r"^\s*\d{6}\s*,", l)]
+df = pd.DataFrame(rows, columns=["ym", "mkt_rf", "smb", "hml", "rf"])
+df.to_sql("factors_raw", con, if_exists="replace", index=False)
+```
+
+- Note what already happened in that snippet, almost in passing: `Mkt-RF` became `mkt_rf` — one naming convention (lowercase snake_case) applied at the door, before drift gets a chance.
+
+### Every fix is a rule in code
+
+<!-- Talking points: 02_clean.py is the chapter's principles, one rule each.
+     Walk the list; each bullet names the principle it implements. -->
+
+- `02_clean.py` turns `*_raw` into clean tables. Every decision from this chapter is one visible, re-runnable, reviewable rule:
+    - `192607` → `'1926-07-01'` — one date convention, ISO, sorts correctly as text (values that don't lie).
+    - `CAST(... AS REAL) / 100` — percent → decimal, once, at the boundary (values that don't lie).
+    - `-99.99` / `-999` → `NULL` — missing data gets the database's real missing value, not a magic number that would silently poison an average (intentional missing codes).
+    - wide → long with one `melt` — one row per industry-month (tidy data).
+    - three sources joined on the now-shared `month` key into one analysis-ready `panel` (harmonization paying off).
+
+```python
+# src/02_clean.py — the industry table: every fix is one labelled line
+wide = pd.read_sql("SELECT * FROM industry_raw", con)
+long = wide.melt(id_vars="ym", var_name="industry", value_name="ret")  # tidy: wide -> long
+long["ret"] = pd.to_numeric(long["ret"])
+long.loc[long["ret"] <= -99.98, "ret"] = float("nan")   # missing codes -> real NULL
+long["ret"] = long["ret"] / 100                          # percent -> decimal
+long["month"] = long["ym"].str[:4] + "-" + long["ym"].str[4:6] + "-01"  # -> ISO date
+long[["month", "industry", "ret"]].to_sql("industry_returns", con,
+                                          if_exists="replace", index=False)
+```
+
+- Before and after, with the project's real rows. `industry_raw` — formatted for a human, one row is ten observations, returns are percent strings:
+
+| ym     | NoDur | Durbl | Manuf | Enrgy | ... | Other |
+|--------|-------|-------|-------|-------|-----|-------|
+| 192607 | 1.44  | 13.90 | 4.70  | -1.14 | ... | 2.14  |
+| 192608 | 3.99  | 3.70  | 2.80  | 3.43  | ... | 4.35  |
+
+- `industry_returns` — tidy, one row per industry per month, numbers the computer can compute on:
+
+| month      | industry | ret     |
+|------------|----------|---------|
+| 1926-07-01 | NoDur    | 0.0144  |
+| 1926-07-01 | Durbl    | 0.1390  |
+| 1926-07-01 | Manuf    | 0.0470  |
+| 1926-07-01 | Enrgy    | -0.0114 |
+
+- And the payoff table, `panel` — one row per industry-month with everything the later regression needs, three sources speaking one dialect:
+
+| month      | industry | ret    | mkt_rf | rf     | recession |
+|------------|----------|--------|--------|--------|-----------|
+| 1926-07-01 | NoDur    | 0.0144 | 0.0289 | 0.0022 | 0         |
+| 1926-08-01 | NoDur    | 0.0399 | 0.0264 | 0.0025 | 0         |
+
+### Did it work?
+
+<!-- Talking points -->
+
+- The whole thing is three commands, re-runnable from nothing by anyone with the repo:
+
+```bash
+uv run src/00_fetch.py      # download + freeze (skips files already present)
+uv run src/01_load_raw.py   # messy files -> *_raw tables, faithfully
+uv run src/02_clean.py      # rules in code -> factors, industry_returns, recession, panel
+```
+
+- One sanity check before declaring victory — does the panel's size equal what the structure promises? 1,198 months × 10 industries:
+
+```sql
+SELECT count(*) FROM panel;          -- 11980  ✓  (= 1198 months × 10 industries)
+SELECT min(month), max(month) FROM panel;   -- 1926-07-01 .. 2026-04-01
+```
+
+Now, for us to reply to the question posed by our co-author, it is way easier to do it since we have evidence of each step.
+Mistakes are way easier to debug and trace, and we do not need to end up in the situation where we talk and talk, but have nothing concrete to show (where did the data come from, how was it harmonized et cetera).
