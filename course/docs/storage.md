@@ -61,6 +61,25 @@ The big benefit is also that SQL is the standard query language used very widely
 
 For a researcher, one way to use an SQLite database would be to have a copy of your raw, cleaned as well as derived data there, so that your scripts write into it and query from it, and the file is part of the project (when exported) but not tracked by git (git is not meant for bigger files than code files).
 
+## SQLite extensions
+
+You should start off with no extensions, to make it so that your setup is not more complicated than you need to.
+However, over time, you might encounter some pitfalls of plain vanilla SQLite, where extensions are a handy addition.
+Below are linked a couple extensions, that I find to be well done, and useful for a particular purpose.
+
+<!-- Link list — all links checked live 2026-06-11. One-line pitches to
+     rewrite; ordering is "most likely needed first". -->
+
+- [sqlean](https://github.com/nalgeon/sqlean) — This is a curated bundle of small extensions. For researchers most importantly, it has statistics functions, like median, percentiles, standard deviations. Vanilla SQLite has only AVG/SUM/COUNT. Sqlean also has regular expressions, UUIDs and a file I/O.
+- [sqlite-zstd](https://github.com/phiresky/sqlite-zstd) — Row-level compression, stays fully queryable. Especially good for text-heavy tables. For sharing a snapshot, a plain `zstd project.sqlite` on the whole file can be used, the extension is when the working storage needs to be smaller.
+- [cr-sqlite](https://github.com/vlcn-io/cr-sqlite) — This extension works around the limitation of a single writer. Copies of the database can take many writes independently of eachother, and then can be later merged automatically.
+- [SpatiaLite](https://www.gaia-gis.it/fossil/libspatialite/index) — Makes SQLite to a fully fledged DB for spatial data.
+
+Not previously mentioned, but there is WAL mode (PRAGMA journal_mode=WAL) which allows multiple readers at the same time.
+
+For many pipelines in research, one writer at a time will almost never be a bottleneck, but if it is, it might be worth it to change to Postgres instead of using an extension to work around those limitations, but Postgres increases setup complexity.
+
+
 ## A taste
 
 SQLite can't read a CSV in pure SQL, so you bring data in once with pandas (or the `sqlite3` CLI's `.import`) — which is exactly what `01_load_raw.py` already did in the hygiene chapter. That one-time landing is behind us: `data/project.sqlite` now holds the raw copies next to the clean tables, with `panel` ready for analysis. From here on, every script just opens the store and asks it questions, instead of re-reading and re-joining a pile of files.
