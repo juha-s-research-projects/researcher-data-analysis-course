@@ -42,13 +42,23 @@ My recommendation is:
 - All changes to the raw data should be performed on a copy of it, and expressed as a rule in code. This is because the code functions as documentation on what steps were taken and what was exactly done. With version control, all the steps also become versioned over time. You should never open a cell and delete it by hand, but instead writing something like `delete from participants where age > 120`. This is explicit, reversible, reviewable and you can even add a comment into the code for the "why" if it is a bigger decision.
 
 
-On unix-like systems the previously described steps might look something like this:
+In practice the previously described steps might look something like this:
 
 - As the last step of acquiring a raw data file, freeze the file. Right after downloading or copying a file into `data/raw`, you should mark it as read-only by writing the following to your terminal:
-  ```bash
-  chmod a-w data/raw/survey_2024.csv
-  ```
-  Now the operating system will make sure that it is not overwritten or edited - being safe from a mistake in your code or from statistical software doing things you don't want it to do. The directory is still writeable, so you can add new files. Think of it as a ritual: get the file, freeze it, and maybe document where it came from. This is an extra layer against accidents, and does not take more than a couple seconds to do.
+
+    === "macOS / Linux"
+
+        ```bash
+        chmod a-w data/raw/survey_2024.csv
+        ```
+
+    === "Windows"
+
+        ```powershell
+        attrib +R data\raw\survey_2024.csv
+        ```
+
+    Now the operating system will make sure that it is not overwritten or edited - being safe from a mistake in your code or from statistical software doing things you don't want it to do. The directory is still writeable, so you can add new files. Think of it as a ritual: get the file, freeze it, and maybe document where it came from. This is an extra layer against accidents, and does not take more than a couple seconds to do.
 
 - Any subsequent steps happen then on a *copy* of the file, performed by program code, leaving any raw files as they were when you got them. Here is a small example of how you could remove a couple erraneous outliers:
   ```python

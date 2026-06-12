@@ -96,31 +96,75 @@ outputs, never hand-typed numbers. Manually filling tables is slow and error pro
 
 We will now do an example, on how to make this project reality with a small example you can follow along if you are interested.
 
-The guide assumes a unix-style terminal interface, and if you see any commands, and there is no other statement, those are inputted to a terminal. Using a terminal might seem scary, or labourous, but at the end of the day you will only need to know 10 or 20 commands somewhat to get around. It is easier to be precise about what to do, when using a terminal rather than a graphical user interface.
+If you see any commands, and there is no other statement, those are inputted to a terminal — on macOS or Linux that is the Terminal app, on Windows it is PowerShell. Using a terminal might seem scary, or labourous, but at the end of the day you will only need to know 10 or 20 commands somewhat to get around. It is easier to be precise about what to do, when using a terminal rather than a graphical user interface.
 
-On Windows, install WSL: <https://learn.microsoft.com/windows/wsl/install>. From that point on, every command in this guide is identical — you are working inside Linux. With macOS, the commands are mostly identical, but you might need to install homebrew to get the terminal tools.
+Where the operating systems differ, the commands are shown in tabs — pick the **Windows** tab once and the whole site remembers your choice. Most commands (everything `git` and `uv`, for example) are identical everywhere and are shown only once, without tabs. The one naming difference to keep in mind: on Windows the project's entrypoint script is `run.ps1` instead of `run.sh` — same idea, different shell.
 
-You also will need to install git, check if you have it by running `git --version`, on macOS you can install it with brew install git, and on Debian/Ubuntu/WSL by `sudo apt install git`.
+One honest caveat: we write this course on macOS and Linux, so the Windows commands are equivalents we have not used daily ourselves. If one of them does not work, please tell us — for example by opening an issue on the course's GitHub repository — and the fix lands for every Windows user after you.
 
-```bash
-# create and enter the project
-mkdir phd-project && cd phd-project
-git init
+You also will need to install git, check if you have it by running `git --version`. On macOS you can install it with `brew install git`, on Debian/Ubuntu by `sudo apt install git`, and on Windows by `winget install Git.Git` (or the installer from <https://git-scm.com>).
 
-# environment slot: uv pins interpreter + deps
-uv init
-uv add duckdb pandas statsmodels matplotlib
+The other tool to install is uv, which manages Python and the project's packages for us (the [coding](coding.md) chapter explains why). Check if you have it with `uv --version`, and if not, install it with the official one-liner:
 
-# the dataflow, made physical
-mkdir -p data/raw src outputs/figures outputs/tables paper
+=== "macOS / Linux"
 
-# the pipeline stages (empty for now; filled in later chapters)
-touch src/01_load_raw.py src/02_clean.py src/03_analysis.py
+    ```bash
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    ```
 
-# the one command (stub for now)
-printf '#!/usr/bin/env bash\nset -euo pipefail\n' > run.sh
-chmod +x run.sh
-```
+=== "Windows"
+
+    ```powershell
+    powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+    ```
+
+After installing, close and reopen your terminal so the `uv` command is found. Now we can scaffold the project:
+
+=== "macOS / Linux"
+
+    ```bash
+    # create and enter the project
+    mkdir phd-project && cd phd-project
+    git init
+
+    # environment slot: uv pins interpreter + deps
+    uv init
+    uv add duckdb pandas statsmodels matplotlib
+
+    # the dataflow, made physical
+    mkdir -p data/raw src outputs/figures outputs/tables paper
+
+    # the pipeline stages (empty for now; filled in later chapters)
+    touch src/01_load_raw.py src/02_clean.py src/03_analysis.py
+
+    # the one command (stub for now)
+    printf '#!/usr/bin/env bash\nset -euo pipefail\n' > run.sh
+    chmod +x run.sh
+    ```
+
+=== "Windows"
+
+    ```powershell
+    # first time only: allow locally written scripts like .\run.ps1 to run
+    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+    # create and enter the project
+    mkdir phd-project; cd phd-project
+    git init
+
+    # environment slot: uv pins interpreter + deps
+    uv init
+    uv add duckdb pandas statsmodels matplotlib
+
+    # the dataflow, made physical
+    mkdir data\raw, src, outputs\figures, outputs\tables, paper
+
+    # the pipeline stages (empty for now; filled in later chapters)
+    New-Item src\01_load_raw.py, src\02_clean.py, src\03_analysis.py
+
+    # the one command (stub for now; no chmod needed — Windows has no execute bit)
+    Set-Content run.ps1 '$ErrorActionPreference = "Stop"'
+    ```
 
 Then, we will need to make a .gitignore file. This is to tell git what to have in version control, and what not. The contents will be the following at this point:
 
@@ -141,7 +185,7 @@ git commit -m "initialize ignored files"
 git add src
 git commit -m "init data processing pipeline"
 
-git add run.sh
+git add run.sh                   # on Windows: git add run.ps1
 git commit -m "init entrypoint script"
 
 git add paper

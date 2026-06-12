@@ -64,11 +64,23 @@ uv add pandas statsmodels matplotlib          # declares + locks (SQLite is stdl
 uv run src/01_load_raw.py                      # runs inside the pinned env
 ```
 
-```bash
-# run.sh — the one command (sketch)
-#!/usr/bin/env bash
-set -euo pipefail
-uv run src/01_load_raw.py
-uv run src/02_clean.py
-uv run src/03_analysis.py
-```
+=== "macOS / Linux"
+
+    ```bash
+    # run.sh — the one command (sketch)
+    #!/usr/bin/env bash
+    set -euo pipefail
+    uv run src/01_load_raw.py
+    uv run src/02_clean.py
+    uv run src/03_analysis.py
+    ```
+
+=== "Windows"
+
+    ```powershell
+    # run.ps1 — the one command (sketch)
+    $ErrorActionPreference = "Stop"
+    uv run src/01_load_raw.py
+    uv run src/02_clean.py
+    uv run src/03_analysis.py
+    ```
