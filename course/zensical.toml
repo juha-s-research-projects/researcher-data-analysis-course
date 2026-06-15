@@ -19,8 +19,7 @@ nav = [
   { "Manuscript pipeline" = "manuscript-pipeline.md" },
   { "LLMs" = "llms.md" },
   { "Performance" = "performance.md" },
-  { "Server" = "server.md" },
-  { "Datahub" = "datahub.md" },
+  { "Institutional offerings" = "institution.md"}
 ]
 
 [project.theme]
