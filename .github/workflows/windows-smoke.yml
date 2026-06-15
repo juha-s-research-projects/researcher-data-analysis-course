@@ -1,0 +1,66 @@
+# Smoke-tests the Windows-tab commands the course tells students to run.
+# We author on macOS/Linux; this runner is our stand-in Windows machine.
+# Mirrors the Windows tabs in course/docs/{architecture,coding,hygiene,
+# manuscript-pipeline}.md — if a tab changes there, change it here too.
+name: windows-smoke
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "course/docs/**"
+      - ".github/workflows/windows-smoke.yml"
+
+jobs:
+  smoke:
+    runs-on: windows-latest
+    defaults:
+      run:
+        # Windows PowerShell 5.1 — what students get out of the box,
+        # not the pwsh 7 the runner defaults to
+        shell: powershell
+    steps:
+      - name: Install uv (official PowerShell one-liner)
+        run: |
+          powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+          Add-Content $env:GITHUB_PATH "$env:USERPROFILE\.local\bin"
+
+      - name: Scaffold the toy project (architecture.md)
+        run: |
+          mkdir phd-project; cd phd-project
+          git init
+          uv init
+          uv add duckdb pandas statsmodels matplotlib
+          mkdir data\raw, src, outputs\figures, outputs\tables, paper
+          New-Item src\01_load_raw.py, src\02_clean.py, src\03_analysis.py
+          Set-Content run.ps1 '$ErrorActionPreference = "Stop"'
+
+      - name: Fill in and run run.ps1 (coding.md sketch)
+        working-directory: phd-project
+        run: |
+          Add-Content run.ps1 'uv run src/01_load_raw.py'
+          Add-Content run.ps1 'uv run src/02_clean.py'
+          Add-Content run.ps1 'uv run src/03_analysis.py'
+          .\run.ps1
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+
+      - name: Freeze raw data (hygiene.md)
+        working-directory: phd-project
+        run: |
+          Set-Content data\raw\survey_2024.csv "id,age`n1,34"
+          attrib +R data\raw\survey_2024.csv
+          $failed = $false
+          try { Set-Content data\raw\survey_2024.csv "overwrite attempt" -ErrorAction Stop } catch { $failed = $true }
+          if (-not $failed) { throw "read-only freeze did not hold" }
+
+      - name: Copy outputs into paper/ (manuscript-pipeline.md)
+        working-directory: phd-project
+        run: |
+          mkdir paper\figures, paper\tables
+          Set-Content outputs\figures\fig1.pdf "dummy"
+          Set-Content outputs\tables\tab1.tex "dummy"
+          Copy-Item outputs/figures/*.pdf paper/figures/
+          Copy-Item outputs/tables/*.tex  paper/tables/
+          # `git -C paper push overleaf main` needs a real Overleaf remote — not smoke-tested
+          if (-not (Test-Path paper\figures\fig1.pdf)) { throw "figure copy failed" }
+          if (-not (Test-Path paper\tables\tab1.tex)) { throw "table copy failed" }

@@ -3,7 +3,7 @@
 #  MkDocs team. docs_dir defaults to "docs", same layout as before.)
 
 [project]
-site_name = "My Docs"
+site_name = "Notes"
 
 # Explicit navigation. Drop this block to let Zensical derive the nav from
 # the docs/ directory structure instead.
@@ -21,7 +21,6 @@ nav = [
   { "Performance" = "performance.md" },
   { "Server" = "server.md" },
   { "Datahub" = "datahub.md" },
-  { "Capstone" = "capstone.md" },
 ]
 
 [project.theme]
@@ -31,6 +30,7 @@ language = "en"
 features = [
   "content.code.annotate",
   "content.code.copy",
+  "content.tabs.link",
   "navigation.footer",
   "navigation.indexes",
   "navigation.instant",
