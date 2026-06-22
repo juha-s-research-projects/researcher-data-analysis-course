@@ -9,6 +9,12 @@ It is NOT a vibe-coding chapter and NOT the teaching vehicle. Keep it tight. -->
 
 # LLMs
 
+For the last couple of years, large language models have been all the hype. 
+They have improved rapidly especially in the last couple of years, and may continue to improve further as hardware improves.
+In my opinion, almost any researcher could benefit from the use of LLMs to some degree, but it is critical to understand and use them properly.
+The most important thing is that the mission critical code should be reviewed very diligently - just like with human programmers.
+Mission critical code will look different for different domains. For an economics or finance researcher, it will be any statistical analysis.
+
 <!-- Intro framing — short paragraph:
 - Set expectations immediately: this is not a "how to code with AI" chapter
   and not a tutorial. The running example already showed an LLM walking on
@@ -17,30 +23,32 @@ It is NOT a vibe-coding chapter and NOT the teaching vehicle. Keep it tight. -->
 - Tone: calm and bounded. LLMs are a useful scaffolding tool with a few hard
   rules, not a co-author of the pipeline. -->
 
-## How this course treats LLMs
+## Good and bad examples of LLM use
 
-- The stance: the LLM is a **scaffold-time assistant**, not part of the pipeline. It helps you *write* deterministic code faster; it never sits *inside* the reproducible run.
-- Where you've already seen it: two cameos in the running example (recapped below). This page is the checklist, not a re-teach.
+There are some good places to use LLMs as a researcher, where the risks are clearly lower, as well as the benefit is higher.
+The following is a list of examples:
 
-## Where LLMs are genuinely good — and where they bite
+- Help with LaTeX formatting
+- Vibe coding a survey, or info website, that is easy to test to see that it works as intended
+- Helping with parts of the pipeline that are tedious to write, but have benefit if done, and are easily verifiable, for example, you could have your pipeline automatically emit LaTeX coded tables containing numbers computed in-code, and have these automatically cascade to your document
+- Improving how plots and figures look (line size, colors, etc., in the realm of "make this more legible" where you might not even know as an economics researcher what would be the optimum color palette for that)
+- Coming up with new ideas on what *could* be possible
+- Finding bugs / mistakes in code, code-audits
 
-- **Good fit:** well-specified, boilerplate, and **visually verifiable** work — e.g. "turn this regression output into a booktabs LaTeX table." You can look at the result and immediately tell if it's right.
-- **Bad fit / bites:** anything you can't readily check; anything touching governed or raw data; anything where a confident-but-wrong answer slips silently into a result. The danger isn't that it's useless — it's that it's *plausible*.
+Following list of examples are uses where an LLM will probably bite at some point:
 
-## The rules (the checklist)
+- Using it (often) for something you are supposed to be an expert in (you should read up on this topic to become better than the LLM, or at least good enough to know where to find information without the LLM)
+- Using it for mission critical code: for economics or finance research that is the statistical analysis, for some other field it could be a central algorithm
+- Anything that is difficult to verify by just testing (statistical analysis!)
 
-- **Committed code is the artifact; the chat is not.** What goes in the repo and runs in the pipeline is the code you reviewed and committed. The conversation that produced it is scaffolding — disposable, not provenance. The pipeline stays deterministic.
-- **Don't paste governed or raw data. Paste the schema + the question.** The model needs the *shape* of the data (column names, types), not the rows. This protects participants/governance and is usually all the model needed anyway.
-- **Verify against a known result first.** You already have a ground truth — your pipeline produces one. Before trusting an LLM-extended analysis, check it reproduces a number you already know is right.
-- **Debugging: paste the traceback + minimal context, never the dataset.** The error and a few lines around it are enough; the data is not part of the question.
+## Things to do to improve
 
-## The two cameos (pointers back to the running example)
+- You should work by committing code one by one, structured in logical changes. This helps you go back in case something breaks down. The chats you might have had, should not be recorded, the output is the artefact.
+- Most often when working with LLMs the prompt will not become better by pasting raw data, but rather giving the schema of the data (data types, column names etc.) Easy habit to pick up that helps when you are working with data that should be kept private.
+- Plan first, generate code only then. LLMs make silent assumptions on things you do not explicitly tell them to do about your code, which is where you might have differing expectations from the code outputted.
+- Use claude code, openai codex or the like. Context and execution capabilities are crucial to have, and LLMs are pretty good at looping until they get something right. You should give them that ability
+- Use Andrej Karpathy inspired [claude.md](https://github.com/multica-ai/andrej-karpathy-skills/blob/main/CLAUDE.md) (can be used with other LLMs as well, not just claude) to make your LLM behave a bit better as a "system prompt".
 
-- **Touchpoint 1 — generate the table-generating code.** The LLM writes the boilerplate that turns regression output into a `booktabs` `.tex` table. Ideal job: well-specified, boilerplate, visually verifiable. Rule demonstrated: *committed code is the artifact, the chat is not.*
-- **Touchpoint 2 — expand the analysis.** Add a control variable / extend a spec. Rules demonstrated: *paste schema + question, not the data*; *verify against the known result first.*
-- (Optional touchpoint 3 — debugging a traceback — same rules, smaller.)
+## Hallucination
 
-## Go deeper
-
-- Your institution's policy on AI tools and research data (governance first).
-- One short, sober piece on LLM limitations for analysis (hallucination, verification).
+At the moment of writing, in 2026, the state of LLMs is that they will hallucinate. This is due to how they work: they model probability distributions over the next word, sample that next word and then sample a new word based on another probability distribution (at random!). If you are not comfortable or okay with the possibility of hallucination, you should not use the LLM for such tasks. Let's imagine you have a massive corpus: you have around a million documents and want to go through them, and just find one question. LLMs are really good at understanding sentiment (compared to regex) and context, in complicated real world documents, where classifiers might fail. Still, out of the million documents, there will be a couple percentage points where you might disagree with the LLM. Depending on your research question or the purpose, this might be completely fine, and can be treated as a measurement error. But for some other purposes, it might be that you won't be able to treat it as a measurement error, if it could happen that you are trying to find something very specific in each document, and if even one or two of them fail, it has big consequences for your research question.
