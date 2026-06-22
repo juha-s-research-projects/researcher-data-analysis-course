@@ -1,14 +1,8 @@
-# ei alotettu
-
-
-
 # Manuscript pipeline
 
-!!! note "Optional — skip if you don't use Overleaf"
-    This chapter is one concrete recipe for the *manuscript slot*. The
-    principle is non-negotiable; the specific products (Overleaf, Zotero) are
-    swappable. If you use a different reference manager or LaTeX setup, take
-    the shape and substitute the tools.
+!!! note "Optional — this example uses Overleaf, but is mainly an example how to handle the manuscript part"
+    You can use other products than Overleaf or Zotero, and probably even have a nicer setup,
+    but this is an example of what kind of shape you should have in your pipeline.
 
 ## The principle
 
@@ -21,17 +15,20 @@ In this chapter, we present an example setup with Zotero, Overleaf, and Git.
 ## The reference setup: Zotero → `references.bib`
 
 Zotero is a career-wide library, but you can there organize reference papers into folder. There, it is also easy to save any papers as PDF next to the Zotero entry to quickly find the right file for the right paper when you want to revisit it and check something.
-The paper PDFs should not live in a project folder, because that makes the git repository unnecessarily heavy. But an exported references.bib should be in your git repository, and you should use Better BibTeX to keep it auto-exported and to have stable citation keys.
+The paper PDFs should not live in a project folder, because that makes the git repository unnecessarily heavy. 
+But an exported references.bib should be in your git repository, and you should use Better BibTeX to keep it auto-exported and to have stable citation keys.
 
 ## The manuscript transport: Overleaf via its git bridge
 
-- How Overleaf fits: it exposes its *own* git repository as the only way to push files into a project. We use that purely as a delivery channel.
-- The flow: `run.sh` writes the freshly generated figures and tables straight into `paper/`, then does a `git push` to the Overleaf remote. Overleaf recompiles; you download the updated PDF. The reviewer's "remove two outliers" → re-run `run.sh` → updated numbers appear in the paper, untouched by hand.
-- **The framing to hold (same story as [version-control](version-control.md) + [architecture](architecture.md)):** this Overleaf repo is a **transport pipe that happens to speak git** — a vendor-forced delivery endpoint, *not* a second version-control system and not your archive. Keep it mentally separate from your project's real history.
+Overleaf uses git to transport files from your machine to an Overleaf project. As we have a version control system already, we only use it in this example for delivery. Overleaf has its own git repository in addition to our main repository.
+`run.sh` writes all the freshly generated figures and tables to `paper/`, does a `git push` to the Overleaf remote.
+Then, Overleaf recompiles and you can download the updated PDF. If there are any changes to anything in your pipeline, you can just re-run the shell script to get updated numbers and figures throughout the paper.
 
-## The one-line signpost: a local compile exists
 
-- A door left unlocked, not a tour: a cleaner local-only setup exists (compile the LaTeX yourself with `latexmk`). If you ever want it, it **replaces just this one step** — the `git push` becomes a local build — and *nothing else you learned moves*. We don't teach it here; it's a single sentence so you know it's there.
+## The local alternative
+
+There is a possibility to have a cleaner local-only setup, where you compile the LaTeX yourself with `latexmk`. With this you do not need the git bridge to Overleaf, it just becomes a local build and you do not need to change anything.
+
 
 ## A taste
 
@@ -55,7 +52,9 @@ The paper PDFs should not live in a project folder, because that makes the git r
 
 - (Plus: a screenshot or two — Better BibTeX auto-export setting; the Overleaf "Git" menu giving you the remote URL.)
 
-## Go deeper
+## Additional information
 
-- Overleaf "Git integration" docs; Zotero + Better BibTeX setup guide.
-- `latexmk` for the local-compile path, if/when you want it.
+- Overleaf "Git integration" [docs](https://docs.overleaf.com/integrations-and-add-ons/git-integration-and-github-synchronization/git-integration);
+-  Zotero [guide](https://www.zotero.org/support/quick_start_guide)
+-  Better BibTeX setup [guide](https://guides.library.umass.edu/c.php?g=1402580&p=10705039).
+- `latexmk` [docs](https://latex.ti.bfh.ch/doc_gettingStarted/configuration/latexmk.html) for local setups
