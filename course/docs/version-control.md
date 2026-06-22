@@ -8,7 +8,7 @@ Thanks to git, we can know who changed what, when and why, and how to go back.
 Many people might do version control by filename and end up with files like `analysis_version-2-final-FINAL (1)_use-this-one.xlsx`. This is not good, as you will have too many files unnecessarily and you will be unsure what the last version was. You might not even be able to go back in time when you want to. Git is a more efficient way to do that, as it gives a complete, attributable and reversible history.
 You might think it is a developer tool, but it should be used by others as well. 
 
-## What belongs in git — and what emphatically does not
+## What belongs in git — and what does not
 
 You should keep in git small text files that describe how to build everything, like source code, lock files, version files, gitignore files, shell scripts, tex code, references, readmes, and configuration files.
 Big raw data dump do not belong to git, as git is built for small text and not for large binaries. Git will slow down with bigger t ext files. Raw data should bea rchived and governed elsewhere, and raw data files should be added to .gitignore as entries, that tell git to not track them.
