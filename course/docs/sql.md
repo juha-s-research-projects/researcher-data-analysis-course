@@ -1,7 +1,3 @@
-<!-- SCAFFOLD — ideas/topics only. Author writes these bullets into prose.
-Per-module shape: Concept → Why it bites (failure story) → What we
-recommend (one opinionated answer) → A taste (short example) → Go deeper. -->
-
 # SQL
 
 In the storage chapter, we got one a single-file contained queryable store.
