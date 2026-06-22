@@ -1,9 +1,3 @@
-<!-- SCAFFOLD — ideas/topics only. Author writes these bullets into prose.
-Per-module shape: Concept → Why it bites (failure story) → What we
-recommend (one opinionated answer) → A taste (short example) → Go deeper.
-This is the keystone chapter — it has the most decided detail (the pinned-
-environment principle + the layered fallback table). -->
-
 # Coding
 
 This is not a programming tutorial. We will just go over the minimum, most impactful software engineering tips that will make your life easier when making research pipelines.
@@ -29,7 +23,15 @@ You should always have scripts for any kind of pipeline. A notebook is fine for 
 Instead of having `df[df.score > 0.85]`, it is way clearer to have `INCLUSION_THRESHOLD = 0.85  # pre-registered cutoff, see protocol §3`, and later `df[df.score > INCLUSION_THRESHOLD]`.
 Future you and other people will read the code and instantly understand what the point is.
 
-## Pin the environment, and it will work on any machine
+## Functions and strong typing
+
+You should use type hints and use strongly typed languages whenever possible, as well as explicitly typed languages, to reduce bugs and errors.
+Examples of type hints in Python can be found [here](https://docs.python.org/3/library/typing.html).
+You should also write functions to abstract code that is used multiple times at different spots, and loops whenever you call something multiple times with a range of inputs.
+You should not write functions for single-use code.
+Another thing that can make your code cleaner is the use of (enumerators)[https://docs.python.org/3/library/enum.html] instead of magic values
+
+## Pin the environment to make your code work on any machine
 
 If you just send your code to somebody else without the environment configuration, it might be quite difficult for somebody else to get it to run like it ran for you. They might have a different Python version, different package version, and you might have had a dependency you installed on your whole system several years ago without remembering.
 
