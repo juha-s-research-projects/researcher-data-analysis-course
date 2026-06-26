@@ -8,8 +8,6 @@ that decide whether research survives review, replication, and future-you. It is
 written for researchers, not computer scientists — the payload is judgment, not
 syntax.
 
-## Read it
-
 **The course is published here: <https://juha-s-research-projects.github.io/researcher-data-analysis-course/>**
 
 That is the intended way to read it. The rest of this repo is the source.
