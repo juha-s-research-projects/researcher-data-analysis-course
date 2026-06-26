@@ -4,6 +4,8 @@
 
 [project]
 site_name = "Notes"
+# Served from a GitHub Pages project subpath, so the site lives under /<repo>/.
+site_url = "https://juha-s-research-projects.github.io/researcher-data-analysis-course/"
 
 # Explicit navigation. Drop this block to let Zensical derive the nav from
 # the docs/ directory structure instead.

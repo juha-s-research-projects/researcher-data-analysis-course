@@ -1,0 +1,55 @@
+# Build the course with Zensical and publish it to GitHub Pages.
+# Runs on every push to master that touches the course, and can be run by hand.
+# One-time setup: in the repo, Settings -> Pages -> Source -> "GitHub Actions".
+name: deploy-docs
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "course/**"
+      - "reqs.txt"
+      - ".github/workflows/deploy-docs.yml"
+  workflow_dispatch:
+
+# Least privilege needed for the official Pages deploy.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never let two deploys race; let an in-flight one finish.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install Zensical
+        run: pip install -r reqs.txt
+
+      - name: Build the site (strict — fail on any broken link)
+        working-directory: course
+        run: zensical build --strict
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: course/site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
