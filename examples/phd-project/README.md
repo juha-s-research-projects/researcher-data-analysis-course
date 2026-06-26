@@ -35,14 +35,17 @@ table. Run `python verify.py` after the pipeline to check the database invariant
 
 ## Where the data comes from
 
-`data/raw/` is fetched by `00_fetch.py`, never committed (it derives from
-restricted CRSP data), and frozen read-only — it is immutable evidence.
+`00_fetch.py` downloads the raw data into `data/raw/` and freezes it read-only —
+it is immutable evidence. The two Fama-French files are **not committed** (they
+derive from restricted CRSP data); they are fetched fresh. The NBER recession
+series **is** committed, because it is public domain and rarely changes — so the
+pipeline still runs if FRED is unreachable.
 
-| file | source | obtained | how | terms |
-|---|---|---|---|---|
-| `F-F_Research_Data_Factors.csv` | Kenneth R. French Data Library, Dartmouth | by `00_fetch.py` | download | free for research use; built from CRSP, not redistributed |
-| `10_Industry_Portfolios.csv` | Kenneth R. French Data Library, Dartmouth | by `00_fetch.py` | download | free for research use; built from CRSP, not redistributed |
-| `USREC.csv` | NBER recession indicator via FRED (St. Louis Fed) | by `00_fetch.py` | download | public domain |
+| file | source | in the repo? | terms |
+|---|---|---|---|
+| `F-F_Research_Data_Factors.csv` | Kenneth R. French Data Library, Dartmouth | no — fetched by `00_fetch.py` | free for research use; built from CRSP, not redistributed |
+| `10_Industry_Portfolios.csv` | Kenneth R. French Data Library, Dartmouth | no — fetched by `00_fetch.py` | free for research use; built from CRSP, not redistributed |
+| `USREC.csv` | NBER recession indicator via FRED (St. Louis Fed) | yes — committed, with credit | public domain |
 
 ## The panel (codebook)
 

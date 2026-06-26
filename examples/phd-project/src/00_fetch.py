@@ -32,6 +32,9 @@ SOURCES = {
         "zip",
         "https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/10_Industry_Portfolios_CSV.zip",
     ),
+    # USREC is public domain, so a copy is committed to data/raw/ — the loop
+    # below skips it (it's already present). This URL is how it was obtained,
+    # and what would refresh it if you ever delete the file.
     "USREC.csv": (
         "csv",
         "https://fred.stlouisfed.org/graph/fredgraph.csv?id=USREC",
