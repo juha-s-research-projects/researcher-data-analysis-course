@@ -1,0 +1,57 @@
+# Proves the toy example (examples/phd-project) actually reproduces on all
+# three operating systems a researcher might use — Linux, macOS, Windows.
+#
+# This is the course's core promise made executable: hand the project to a
+# stranger, they run the pipeline with one command and get the same panel.
+# Each OS does exactly that from a clean checkout: fetch the raw data, load it,
+# clean it, then verify.py asserts the database invariants.
+#
+# The weekly schedule is deliberate: it catches upstream bit-rot (a Fama-French
+# or FRED URL going stale) before a student does.
+name: example
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "examples/phd-project/**"
+      - ".github/workflows/example-ci.yml"
+  pull_request:
+    paths:
+      - "examples/phd-project/**"
+      - ".github/workflows/example-ci.yml"
+  schedule:
+    - cron: "0 6 * * 1"  # Mondays 06:00 UTC — catch stale data-source URLs
+
+jobs:
+  reproduce:
+    name: reproduce on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false  # one OS failing shouldn't hide the others' results
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    defaults:
+      run:
+        working-directory: examples/phd-project
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      # Run the exact entrypoint we tell students to run — the whole promise is
+      # "one command reproduces it", so the test runs that one command.
+      - name: Reproduce via run.sh (macOS / Linux)
+        if: runner.os != 'Windows'
+        run: ./run.sh
+
+      - name: Reproduce via run.ps1 (Windows)
+        if: runner.os == 'Windows'
+        run: .\run.ps1
+
+      - name: Verify the database invariants (verify.py)
+        run: uv run verify.py

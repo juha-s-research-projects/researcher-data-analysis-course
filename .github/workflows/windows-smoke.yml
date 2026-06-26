@@ -30,14 +30,15 @@ jobs:
           mkdir phd-project; cd phd-project
           git init
           uv init
-          uv add duckdb pandas statsmodels matplotlib
+          uv add pandas statsmodels matplotlib
           mkdir data\raw, src, outputs\figures, outputs\tables, paper
-          New-Item src\01_load_raw.py, src\02_clean.py, src\03_analysis.py
+          New-Item src\00_fetch.py, src\01_load_raw.py, src\02_clean.py, src\03_analysis.py
           Set-Content run.ps1 '$ErrorActionPreference = "Stop"'
 
       - name: Fill in and run run.ps1 (coding.md sketch)
         working-directory: phd-project
         run: |
+          Add-Content run.ps1 'uv run src/00_fetch.py'
           Add-Content run.ps1 'uv run src/01_load_raw.py'
           Add-Content run.ps1 'uv run src/02_clean.py'
           Add-Content run.ps1 'uv run src/03_analysis.py'
