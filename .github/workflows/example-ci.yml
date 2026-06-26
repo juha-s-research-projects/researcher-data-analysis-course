@@ -38,10 +38,10 @@ jobs:
         working-directory: examples/phd-project
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v8
 
       # Run the exact entrypoint we tell students to run — the whole promise is
       # "one command reproduces it", so the test runs that one command.
