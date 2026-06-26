@@ -47,4 +47,4 @@ You can write code to be run on a GPU with a couple specialized programming lang
 
 When optimizing, you should always measure first, and only then start tackling any optimizations. The biggest levers will be the technologies and architecture that you are using, not small optimizations.
 
-The above was a short, condensed intro to optimization. If you are more interested in the topic, I recommend going through the Aalto course [Programming parallel computers](https://ppc.cs.aalto.fi/). The material is open year round, with good exercises as well as explanations on what we touched. moi
+The above was a short, condensed intro to optimization. If you are more interested in the topic, I recommend going through the Aalto course [Programming parallel computers](https://ppc.cs.aalto.fi/). The material is open year round, with good exercises as well as explanations on what we touched.
