@@ -5,7 +5,7 @@ There are four non-negotiable habits and the environment, when writing your own 
 
 ## Scripts over clicks
 
-If there is something that toucheds data, it should be a script, and it should be able to run from start to finish and not be some kind of clicks in some kind of graphical interface.
+If there is something that touches data, it should be a script, and it should be able to run from start to finish and not be some kind of clicks in some kind of graphical interface.
 Any manual steps are places where you risk making errors. Humans are clumsy. Knowing later on what exact manual steps were taken with what settings is probably impossible.
 This is why every transformation is in code, which leaves documentation / a trace for afterward.
 Ideally you should also have one entrypoint to your pipeline, like [architecture](architecture.md)'s `run.sh`. 
@@ -29,7 +29,7 @@ You should use type hints and use strongly typed languages whenever possible, as
 Examples of type hints in Python can be found [here](https://docs.python.org/3/library/typing.html).
 You should also write functions to abstract code that is used multiple times at different spots, and loops whenever you call something multiple times with a range of inputs.
 You should not write functions for single-use code.
-Another thing that can make your code cleaner is the use of (enumerators)[https://docs.python.org/3/library/enum.html] instead of magic values
+Another thing that can make your code cleaner is the use of [enumerators](https://docs.python.org/3/library/enum.html) instead of magic values
 
 ## Pin the environment to make your code work on any machine
 
@@ -72,6 +72,7 @@ uv run src/01_load_raw.py                      # runs inside the pinned env
     # run.sh — the one command (sketch)
     #!/usr/bin/env bash
     set -euo pipefail
+    uv run src/00_fetch.py
     uv run src/01_load_raw.py
     uv run src/02_clean.py
     uv run src/03_analysis.py
@@ -82,6 +83,7 @@ uv run src/01_load_raw.py                      # runs inside the pinned env
     ```powershell
     # run.ps1 — the one command (sketch)
     $ErrorActionPreference = "Stop"
+    uv run src/00_fetch.py
     uv run src/01_load_raw.py
     uv run src/02_clean.py
     uv run src/03_analysis.py

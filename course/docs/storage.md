@@ -40,7 +40,7 @@ Anything that is the raw, original data should never be stored in a spreadsheet 
 ## File formats: CSV vs Parquet vs a database
 
 - **CSV** — universal, human-readable, opens anywhere. But: untyped (the machine is not told if something is a number or text), no schema, no compression, slow and large at scale, ambiguous quoting/encoding. Works as an *interchange* and *raw* format; poor as a working store.
-- **Parquet** — columnar, typed, compressed (smaller file sizes), fast to query selectively. Binary (not human-readable). Right choice for large tabular data you keep or share. Typed but the right choice for large tabular data you keep or share. 
+- **Parquet** — columnar, typed, compressed (smaller file sizes), fast to query selectively. Binary (not human-readable). Good choice for large tabular data you keep or share.
 - **A single-file database** — query without loading everything into memory, a schema, multiple related tables in one file. This is the working store. A copy could even be easily sent to somebody else as needed, as the database is contained in the single file!
 
 CSV and Parquet are popular choices for sending data from one person to the other. The database should be where it lives and is processed as well as analyzed.
@@ -50,7 +50,7 @@ This difference is not small, and matters significantly. Below are plotted times
 
 ![Time to answer one aggregate query versus dataset size, for CSV, Parquet, Excel and SQLite](assets/storage-benchmark.png)
 
-The most important thing is Excel agaisnt everything else. The other solutions are quite close to each other in performance. But Excel is in its own league in a bad way, where a million rows already takes around 30 seconds to answer, and when we surpass a million rows, it will not open the data file at all. The other options barely budge at the scale. Operations like these might be performed multiple times in your research pipeline, so seconds matter here.
+The most important thing is Excel against everything else. The other solutions are quite close to each other in performance. But Excel is in its own league in a bad way, where a million rows already takes around 30 seconds to answer, and when we surpass a million rows, it will not open the data file at all. The other options barely budge at the scale. Operations like these might be performed multiple times in your research pipeline, so seconds matter here.
 
 ## The recommendation: SQLite, one single-file store
 

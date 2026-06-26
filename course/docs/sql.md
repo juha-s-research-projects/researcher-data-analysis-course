@@ -1,13 +1,13 @@
 # SQL
 
-In the storage chapter, we got one a single-file contained queryable store.
+In the storage chapter, we got a single-file contained queryable store.
 SQL is the language for querying it, and communicating to the machine what and how you want data fetched.
 This skill is very transferable: in any real world data work, where we are not playing around but have actually big volumes of data, knowing some SQL is mandatory.
 This small, stable language has outlived all tools it runs on. It first appeared in 1973, and was standardised in 1986 by ANSI and 1987 by ISO.
 In enterprise transactional workloads, and analytics workloads, a rough estimate of its popularity could be perhaps around 80% (this number is very difficult to approximate, take it with a pinch of salt. the point is that it is the dominant, most popular, standard choice).
 
 Whenever you build a pivot table or a vlookup in your favourite spreadsheet software, you have already had the same mental model as SQL. SQL is just saying it precisely, and with the added benefit that in program code, the statements remain as artefacts for later.
-You do not need to learn a language, or to learn how to program, to use SQL. By learning what five, pretty descriptively named verbs do, you already can read and understand 90% of SQL statements written by others. By having a cheat sheet and nice resources, you can also write your own SQL queries when needed. The language itself is tiny, and can be used with Postgres, SQL databases, DuckDB, etc.
+You do not need to learn a language, or to learn how to program, to use SQL. By learning what five, pretty descriptively named verbs do, you already can read and understand 90% of SQL statements written by others. By having a cheat sheet and nice resources, you can also write your own SQL queries when needed. The language itself is tiny, and the same statements work across SQLite, Postgres, and many other databases.
 
 ## Pivot tables and VLOOKUP were always trying to be these
 

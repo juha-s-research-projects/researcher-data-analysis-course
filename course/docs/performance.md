@@ -15,7 +15,7 @@ You should first measure run times, before optimizing at all.
 
 ### Python vs C / Rust
 
-Python is a JIT compiled language, meaning that the code is converted into machine readable form at run time, not before. This is in stark contrast to C, which is compiled first, and run then.
+Python is an interpreted language, meaning that the code is converted into machine readable form at run time, not before. This is in stark contrast to C, which is compiled first, and run then.
 The advantage of this is that the CPU does not have the overhead of converting code to machine readable form, and thus C and Rust are way faster, but also more complex to write.
 
 ### Data storage
@@ -25,7 +25,7 @@ There, a well working approach could be to use a properly optimized database, wh
 
 ### Branches
 
-On modern CPU's, each of them have some form of branch brediction. This means that for every if-else statement in the code, the CPU tries to predict which path will be taken, and executes that path in advance for greater speed.
+On modern CPU's, each of them have some form of branch prediction. This means that for every if-else statement in the code, the CPU tries to predict which path will be taken, and executes that path in advance for greater speed.
 The cost of the branch prediction are branch prediction misses, where the prediction is wrong, and the program execution slows down. This can be mitigated by reducing number of branches as well as having the if-else structure be rather "if valid/common case, do this, else rare case" rather than "if invalid/rare case, do this, else do common path". Some languages have the ability to do branch prediction hints.
 
 ### Parallelization
@@ -47,4 +47,4 @@ You can write code to be run on a GPU with a couple specialized programming lang
 
 When optimizing, you should always measure first, and only then start tackling any optimizations. The biggest levers will be the technologies and architecture that you are using, not small optimizations.
 
-The above was a short, condenced intro to optimization. If you are more interested in the topic, I recommend going through the Aalto course [Programming parallel computers](https://ppc.cs.aalto.fi/). The material is open year round, with good exercises as well as explanations on what we touched.
+The above was a short, condensed intro to optimization. If you are more interested in the topic, I recommend going through the Aalto course [Programming parallel computers](https://ppc.cs.aalto.fi/). The material is open year round, with good exercises as well as explanations on what we touched.

@@ -64,7 +64,7 @@ In practice the previously described steps might look something like this:
   ```python
   # src/02_clean.py
   con.execute("""
-      DELETE FROM equity_returns WHERE return < -1.0
+      DELETE FROM industry_returns WHERE return < -1.0
       """)
   ```
   This code deletes returns from equity returns that are less than -100%.

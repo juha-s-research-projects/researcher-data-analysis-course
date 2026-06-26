@@ -11,7 +11,7 @@ You might think it is a developer tool, but it should be used by others as well.
 ## What belongs in git — and what does not
 
 You should keep in git small text files that describe how to build everything, like source code, lock files, version files, gitignore files, shell scripts, tex code, references, readmes, and configuration files.
-Big raw data dump do not belong to git, as git is built for small text and not for large binaries. Git will slow down with bigger t ext files. Raw data should bea rchived and governed elsewhere, and raw data files should be added to .gitignore as entries, that tell git to not track them.
+Big raw data dumps do not belong to git, as git is built for small text and not for large binaries. Git will slow down with bigger files. Raw data should be archived and governed elsewhere, and raw data files should be added to .gitignore as entries, that tell git to not track them.
 Anything that can be generated should not be tracked by git either. Neither should database files, .venv files, built pdfs.
 
 ## Commits as a research log

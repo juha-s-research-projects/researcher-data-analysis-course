@@ -43,17 +43,18 @@ phd-project/
 ├── README.md                  # what this is, how to run it, in 10 lines
 ├── pyproject.toml             # declared dependencies + project metadata
 ├── uv.lock                    # exact, fully pinned dependency graph
-├── .python-version            # pinned interpreter (e.g. 3.12)
+├── .python-version            # pinned interpreter (e.g. 3.13)
 ├── .gitignore                 # ignores the venv, caches, build artefacts from git
 ├── run.sh                     # ONE command: env → db → analysis → outputs
 │
 ├── data/
 │   ├── raw/                   # immutable, read-only, NEVER hand-edited
 │   │   └── survey_2024.csv    #   (the only true source of data)
-│   └── project.duckdb         # single-file database: clean + derived tables
+│   └── project.sqlite         # single-file database: clean + derived tables
 │
 ├── src/
-│   ├── 01_load_raw.py         # data/raw/*  →  project.duckdb
+│   ├── 00_fetch.py            # download the raw data → data/raw/, then freeze it
+│   ├── 01_load_raw.py         # data/raw/*  →  project.sqlite
 │   ├── 02_clean.py            # cleaning steps, in code, reproducible
 │   └── 03_analysis.py         # regressions → writes tables + figures
 │
@@ -84,7 +85,7 @@ Optimally even the skills we use would be transferable, so that we do not need t
 
 - **Environment slot** — must guarantee a pinned, reproducible interpreter and dependency set. This is important, so that we make it explicit what software and what versions we use, and to make it easy for somebody else to run the code. *Filled with uv → see [coding](coding.md).*
 
-- **Data-store slot** — must guarantee one queryable, single-file store instead of a CSV sprawl. This will make sure that our data is cleanly stored, as well as with high performance if needed. *Filled with DuckDB → see [storage](storage.md).*
+- **Data-store slot** — must guarantee one queryable, single-file store instead of a CSV sprawl. This will make sure that our data is cleanly stored, as well as with high performance if needed. *Filled with SQLite → see [storage](storage.md).*
 
 - **Analysis-code slot** — must guarantee scripted, deterministic
 transformations (no clicks), but should have good support for statistical methods, libraries and external tooling, as well as be something you can write at least somewhat productively. *Filled with Python → see [coding](coding.md).*
@@ -128,14 +129,15 @@ After installing, close and reopen your terminal so the `uv` command is found. N
     git init
 
     # environment slot: uv pins interpreter + deps
+    # (SQLite needs no package — it ships with Python)
     uv init
-    uv add duckdb pandas statsmodels matplotlib
+    uv add pandas statsmodels matplotlib
 
     # the dataflow, made physical
     mkdir -p data/raw src outputs/figures outputs/tables paper
 
     # the pipeline stages (empty for now; filled in later chapters)
-    touch src/01_load_raw.py src/02_clean.py src/03_analysis.py
+    touch src/00_fetch.py src/01_load_raw.py src/02_clean.py src/03_analysis.py
 
     # the one command (stub for now)
     printf '#!/usr/bin/env bash\nset -euo pipefail\n' > run.sh
@@ -153,14 +155,15 @@ After installing, close and reopen your terminal so the `uv` command is found. N
     git init
 
     # environment slot: uv pins interpreter + deps
+    # (SQLite needs no package — it ships with Python)
     uv init
-    uv add duckdb pandas statsmodels matplotlib
+    uv add pandas statsmodels matplotlib
 
     # the dataflow, made physical
     mkdir data\raw, src, outputs\figures, outputs\tables, paper
 
     # the pipeline stages (empty for now; filled in later chapters)
-    New-Item src\01_load_raw.py, src\02_clean.py, src\03_analysis.py
+    New-Item src\00_fetch.py, src\01_load_raw.py, src\02_clean.py, src\03_analysis.py
 
     # the one command (stub for now; no chmod needed — Windows has no execute bit)
     Set-Content run.ps1 '$ErrorActionPreference = "Stop"'
@@ -172,7 +175,7 @@ Then, we will need to make a .gitignore file. This is to tell git what to have i
 # regenerable — never committed
 .venv/
 __pycache__/
-data/project.duckdb
+data/project.sqlite
 outputs/
 ```
 

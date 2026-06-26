@@ -93,17 +93,18 @@ phd-project/
 ├── README.md                  # what this is, how to run it, in 10 lines
 ├── pyproject.toml             # declared dependencies + project metadata
 ├── uv.lock                    # exact, fully pinned dependency graph
-├── .python-version            # pinned interpreter (e.g. 3.12)
+├── .python-version            # pinned interpreter (e.g. 3.13)
 ├── .gitignore                 # ignores the venv, caches, build artefacts
 ├── run.sh                     # ONE command: env → db → analysis → outputs
 │
 ├── data/
 │   ├── raw/                   # immutable, read-only, NEVER hand-edited
 │   │   └── survey_2024.csv    #   (the only true source of data)
-│   └── project.duckdb         # single-file database: clean + derived tables
+│   └── project.sqlite         # single-file database: clean + derived tables
 │
 ├── src/
-│   ├── 01_load_raw.py         # data/raw/*  →  project.duckdb
+│   ├── 00_fetch.py            # download the raw data → data/raw/, then freeze it
+│   ├── 01_load_raw.py         # data/raw/*  →  project.sqlite
 │   ├── 02_clean.py            # cleaning steps, in code, reproducible
 │   └── 03_analysis.py         # regressions → writes tables + figures
 │

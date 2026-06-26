@@ -1,12 +1,3 @@
-# ei alotettu
-
-
-<!-- SCAFFOLD — ideas/topics only. Author writes these bullets into prose.
-NOTE on this chapter's role (from COURSE-NOTES): LLMs are taught by CAMEO in
-the running example, NOT here. This page is the short consolidation/checklist
-of rules already demonstrated inline — the receipts, one place to find them.
-It is NOT a vibe-coding chapter and NOT the teaching vehicle. Keep it tight. -->
-
 # LLMs
 
 For the last couple of years, large language models have been all the hype. 
@@ -15,13 +6,6 @@ In my opinion, almost any researcher could benefit from the use of LLMs to some 
 The most important thing is that the mission critical code should be reviewed very diligently - just like with human programmers.
 Mission critical code will look different for different domains. For an economics or finance researcher, it will be any statistical analysis.
 
-<!-- Intro framing — short paragraph:
-- Set expectations immediately: this is not a "how to code with AI" chapter
-  and not a tutorial. The running example already showed an LLM walking on
-  twice at natural moments. This page just collects the rules it demonstrated,
-  so there's one place to find them.
-- Tone: calm and bounded. LLMs are a useful scaffolding tool with a few hard
-  rules, not a co-author of the pipeline. -->
 
 ## Good and bad examples of LLM use
 
