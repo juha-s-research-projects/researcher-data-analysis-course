@@ -14,8 +14,10 @@ raw data is immutable evidence and is never edited by hand.
 
 import io
 import stat
+import time
 import zipfile
 from pathlib import Path
+from urllib.error import URLError
 from urllib.request import Request, urlopen
 
 RAW = Path(__file__).resolve().parents[1] / "data" / "raw"
@@ -39,10 +41,21 @@ SOURCES = {
 READ_ONLY = stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH
 
 
-def _download(url: str) -> bytes:
+def _download(url: str, attempts: int = 4) -> bytes:
+    # These public data servers occasionally reset or time out a connection,
+    # especially from cloud IPs. A transient blip shouldn't fail the whole run,
+    # so retry a few times with a growing pause before giving up.
     req = Request(url, headers={"User-Agent": "phd-project-example/1.0"})
-    with urlopen(req) as resp:
-        return resp.read()
+    for attempt in range(1, attempts + 1):
+        try:
+            with urlopen(req, timeout=60) as resp:
+                return resp.read()
+        except (URLError, OSError) as err:
+            if attempt == attempts:
+                raise
+            pause = 2 ** attempt  # 2s, 4s, 8s, ...
+            print(f"  retry {attempt}/{attempts - 1} after {err} (waiting {pause}s)")
+            time.sleep(pause)
 
 
 def main() -> None:
