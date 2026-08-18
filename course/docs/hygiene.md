@@ -58,7 +58,7 @@ In practice the previously described steps might look something like this:
         attrib +R data\raw\survey_2024.csv
         ```
 
-    Now the operating system will make sure that it is not overwritten or edited - being safe from a mistake in your code or from statistical software doing things you don't want it to do. The directory is still writeable, so you can add new files. Think of it as a ritual: get the file, freeze it, and maybe document where it came from. This is an extra layer against accidents, and does not take more than a couple seconds to do.
+    Now the operating system will make sure that it is not overwritten or edited, safe from a mistake in your code or from statistical software doing things you don't want it to do. The directory is still writeable, so you can add new files. You should make it a habit to get the file, freeze it, and maybe document where it came from. This is an extra layer against accidents, and does not take more than a couple seconds to do.
 
 - Any subsequent steps happen then on a *copy* of the file, performed by program code, leaving any raw files as they were when you got them. Here is a small example of how you could remove a couple erraneous outliers:
   ```python
@@ -223,10 +223,9 @@ The 1-month TBill rate data until 202405 are from Ibbotson Associates. ...
 
 ### Let's load the data
 
-<!-- Talking points -->
 
 - `01_load_raw.py` has one job: extract the one block we want out of each file and put it in the database as-is, into tables suffixed `_raw`. Units, dates, missing codes, shape — all still wrong, at this point. Loading and cleaning are separate steps, so when something looks odd later you can ask the database "what did the source actually say?" without re-opening the messy file.
-- A taste of the extraction — the monthly rows are exactly the ones whose first field is a 6-digit `YYYYMM`, which quietly skips both the preamble and the stacked annual block:
+- The monthly rows are exactly the ones whose first field is a 6-digit `YYYYMM`, which quietly skips both the preamble and the stacked annual block:
 
 ```python
 # src/01_load_raw.py — keep only the monthly block of the factors file
@@ -239,8 +238,6 @@ df.to_sql("factors_raw", con, if_exists="replace", index=False)
 
 ### Every fix is a rule in code
 
-<!-- Talking points: 02_clean.py is the chapter's principles, one rule each.
-     Walk the list; each bullet names the principle it implements. -->
 
 - `02_clean.py` turns `*_raw` into clean tables. Every decision from this chapter is one visible, re-runnable, reviewable rule:
     - `192607` → `'1926-07-01'` — one date convention, ISO, sorts correctly as text (values that don't lie).
@@ -250,7 +247,7 @@ df.to_sql("factors_raw", con, if_exists="replace", index=False)
     - three sources joined on the now-shared `month` key into one analysis-ready `panel` (harmonization paying off).
 
 ```python
-# src/02_clean.py — the industry table: every fix is one labelled line
+# src/02_clean.py - the industry table: every fix is one labelled line
 wide = pd.read_sql("SELECT * FROM industry_raw", con)
 long = wide.melt(id_vars="ym", var_name="industry", value_name="ret")  # tidy: wide -> long
 long["ret"] = pd.to_numeric(long["ret"])
@@ -286,7 +283,6 @@ long[["month", "industry", "ret"]].to_sql("industry_returns", con,
 
 ### Did it work?
 
-<!-- Talking points -->
 
 - The whole thing is three commands, re-runnable from nothing by anyone with the repo:
 

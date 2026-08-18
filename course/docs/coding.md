@@ -36,9 +36,13 @@ Another thing that can make your code cleaner is the use of [enumerators](https:
 If you just send your code to somebody else without the environment configuration, it might be quite difficult for somebody else to get it to run like it ran for you. They might have a different Python version, different package version, and you might have had a dependency you installed on your whole system several years ago without remembering.
 
 You should:
+
 1. Declare any dependencies that the project needs **explicitly**, in a requirements file for example
+
 2. Lock the dependencies to exact versions, saying `pandas==3.0.3` instead of `pandas` (which will result in the newest mainstream release to be installed)
+
 3. Pin the language version (Python interpreter, R, Julia)
+
 4. Isolate the environment: each project has its own environment and dependencies. This way two projects can have different versions of e.g. pandas without conflict.
 
 The tool I recommend is `uv`. It does everything in one tool.

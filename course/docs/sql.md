@@ -11,7 +11,7 @@ You do not need to learn a language, or to learn how to program, to use SQL. By 
 
 ## Pivot tables and VLOOKUP were always trying to be these
 
-SQL is superior to a spreadhseet having a chain of vlookups, as the programmatic version can be more easily audited. A spreadsheet might after a data update have half of the vlookups point to wrong rows
+SQL is superior to a spreadsheet having a chain of vlookups, as the programmatic version can be more easily audited. A spreadsheet might after a data update have half of the vlookups point to wrong rows
 A pivot table needs to be rebuilt by hand every time data changes.
 You can see that the solutions made by those are inherently fragile, as well as will cause some manual work and grey hair.
 
@@ -20,11 +20,11 @@ The core idea with SQL is that it is declarative, meaning you describe what you 
 
 ## The core five verbs that cover around 90% of research needs
 
-- `SELECT` — pick columns (and compute new ones).
-- `WHERE` — keep only the rows you want (filter).
-- `GROUP BY` + an aggregate (`count`, `sum`, `avg`, `min`, `max`) — collapse many rows into per-group summaries. This is comparable to what pivot table has as the function.
-- `JOIN` — combine two tables on a shared key. This is comparable to VLOOKUP
-- `ORDER BY` — sort the result.
+- `SELECT`: pick columns (and compute new ones).
+- `WHERE`: keep only the rows you want (filter).
+- `GROUP BY` + an aggregate (`count`, `sum`, `avg`, `min`, `max`): collapse many rows into per-group summaries. This is comparable to what pivot table has as the function.
+- `JOIN`: combine two tables on a shared key. This is comparable to VLOOKUP
+- `ORDER BY`: sort the result.
 
 ## A statement dissected
 
@@ -52,28 +52,6 @@ This statement will return a table, with two columns: name and population, from 
 
 ## A couple more examples of different SQL statements
 
-<!-- Talking points:
-- The five verbs READ data. These four WRITE: they are the rest of what a
-  researcher ever needs, and the reader has already met them without being
-  told — every cleaning rule in the hygiene chapter was one of these
-  (02_clean.py does DROP TABLE IF EXISTS + CREATE TABLE ... AS SELECT;
-  the outlier example was a DELETE).
-- Order below is a table's life cycle: the table is born (CREATE TABLE),
-  rows go in (INSERT), wrong rows go out (DELETE), the table grows a column
-  (ALTER), the table goes away (DROP).
-- One caution worth a sentence: these run immediately and there is no undo.
-  That is not scary in OUR setup — they only ever touch derived tables, and
-  the pipeline rebuilds those from read-only raw files, so the worst case of
-  a botched DELETE is "re-run the pipeline." This is the hygiene chapter
-  paying rent.
-- On CREATE TABLE, worth one extra sentence: there is also the
-  CREATE TABLE ... AS SELECT variant — define-and-fill in one statement,
-  with a plain SELECT inside. The running example builds every clean table
-  that way in 02_clean.py.
-- These diagrams are original compositions in the same visual style as
-  the Wikipedia figure (rendered with the same Wikimedia formula renderer);
-  the credit line above covers the styling's origin. -->
-
 ![Anatomy of an SQL CREATE TABLE statement: CREATE TABLE clause naming the new table, column definitions giving each column a name and a type](assets/sql-anatomy-create.svg)
 
 ![Anatomy of an SQL INSERT statement: INSERT INTO clause naming the table and columns, VALUES clause holding the literals](assets/sql-anatomy-insert.svg)
@@ -90,7 +68,7 @@ This statement *alters* the table structure in a profound way. It adds a new col
 
 ![Anatomy of an SQL DROP TABLE statement: DROP TABLE followed by the table name — deletes the whole table, data and all](assets/sql-anatomy-drop.svg)
 
-This statement drops a table completely!
+This statement drops (**deletes**) a table (and its data) completely!
 
 
 ## Indices: same queries, but sped up
@@ -144,7 +122,6 @@ In my opinion, the sanest way to divide responsibilities is to have SQL shape th
 
 Here is a list of links for further study. I recommend very very strongly to spend some time practicing SQL queries if they are not familiar to you, even in the LLM age. Take one week, where you spend one or two hours per working day on these, and these will be easy after that.
 
-<!-- All links checked live 2026-06-11. Suggested one-line pitches per link: -->
 
 - [SQLBolt](https://sqlbolt.com) — interactive lessons in the browser. Start by practicing the five verbs here first.
 - [Select Star SQL](https://selectstarsql.com) — a free interactive book that teaches SQL by analyzing a real dataset. This is close in spirit to research work, continue here.

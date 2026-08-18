@@ -2,7 +2,7 @@
 
 The documentation is what makes a project survive. It is quite important.
 Many might think at first sight that good documentation needs to be large, but this is a misconception.
-Good documentation is concise. It should tell the *why*, not the *what*.
+**Good documentation is concise**. It should tell the *why*, not the *what*.
 If your code is half-decent, people can inspect the source code to learn the *what*.
 Documentation does not need to be a second thesis. 
 It is enough to have a couple lines for installation / running instructions, dependencies and things to note.

@@ -6,22 +6,28 @@ There are a couple offerings that could offer you help: Aalto Datahub, Aalto Tri
 
 ## Aalto Datahub:
 
-Datahub in a Nutshell: 
+Datahub in a Nutshell:
+
 1) Consolidates and disseminates several data sources into a single data hub
+
 2) Centralizes data acquisition including vendor negotiation and purchasing
+
 3) Facilitates easy access to commercial and unique, high-quality datasets
 
 Goal: Datahub enables researchers (and students) to increase their productivity by removing data-related obstacles
 
-Access: datahub.aalto.fi
-Data sources: https://datahub.aalto.fi/en/data-sources#/
+[Access](datahub.aalto.fi) and [list](https://datahub.aalto.fi/en/data-sources#/) of data sources.
 
 Note: Always check the license, availability, access process, and citation requirements under the data-sources details page
 
-Datahub further allows researchers to promote their data-related research under https://datahub.aalto.fi/en/data-related-research-programs#/. This allows junior and senior researchers to: 
+Datahub further allows researchers to promote their data-related research [here](https://datahub.aalto.fi/en/data-related-research-programs#/) which allows junior and senior researchers to: 
+
 1) Promote their work
+
 2) Make their custom data available to other researchers (good for citations!)
+
 3) Find collaborators on research projects
+
 4) Raise their profile.
 
 ## Finance department server
@@ -53,6 +59,5 @@ But using Triton, you (typically) ssh into a login node, and then you submit job
 The larger a job is, the more it needs to wait before it gets processed, and the smaller a job is, the quicker it gets processed.
 The jobs are also structured as array jobs, meaning the program (you make) should be able to be called with an array of inputs, and will output an array of outputs.
 
-The learning curve on this machine is higher, but it isn't impossible at all. There is more information here:
-https://scicomp.aalto.fi/aalto/welcomeresearchers/ with information about how to apply for an account, how to use the cluster.
+The learning curve on this machine is higher, but it isn't impossible at all. There is more information [here](https://scicomp.aalto.fi/aalto/welcomeresearchers/) with information about how to apply for an account, how to use the cluster.
 There are also courses offered periodically, and a daily garage where you can get help if needed.

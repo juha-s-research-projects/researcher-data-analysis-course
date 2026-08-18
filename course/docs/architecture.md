@@ -1,6 +1,6 @@
 # Project architecture
 
-In this chapter we will outline the project architecture with a suggested structure of a project. The chapter will be mostly about the shape of the project, not the individual tools, they will come later. Thinking of an architecture proactively lets you choose tools at each point that fit the job as well as possible.
+In this chapter we will outline the project architecture with a suggested structure of a project. The chapter will be mostly about the shape of the project, not the individual tools, they will come later. Thinking of an architecture **first** lets you choose tools at each point that fit the job as well as possible.
 
 ## The project is the unit of work, not the file
 
@@ -13,8 +13,8 @@ In principle, you should be able to send one .zip, with no additional explanatio
 Data should always flow in one direction. This will make the workflow easier to follow, as well as reduce the risk of accidentally losing data. 
 You can confidently re-run or discard any data that is not the raw data, as it is produced programmatically, fixing the rules of data processing steps.
 It will become more rare for you to need to edit things by hand, as that is prone to errors, and very tedious.
-If we compare to our initial motivating example in the start, this way of working should make your research more disciplined, professional and to reduce any errors you would make.
-It also spares your precious energy into thinking the complex matters of research, and not spend that energy into fighting with the computer.
+If we compare to our initial motivating example in the start, this way of working should make your research more disciplined, professional and reduce any errors you would make.
+It also spares your precious energy thinking the complex matters of research, and not spend that energy fighting with the computer.
 
 ```text
 raw  ──▶  store (DB)  ──▶  outputs  ──▶  manuscript
@@ -34,8 +34,9 @@ The files tracked by version control will often be small, text files containing 
 Under this umbrella goes source code, files detailing project dependencies, .tex files to build pdfs.
 The untracked files on the other hand are often any big datasets as git is designed for small files, and anything that is built by running the pipeline, like a PDF.
 A rule of thumb could be asking yourself, "If I delete this, can it be regenerated from tracked files?" If yes, do not track it.
-This raises an apparent exception: later, our script pushes the generated tables and figures to Overleaf. That is not a second job piled onto *this* project's version control — Overleaf simply exposes its own, separate git repository as the only way to deliver files into it. Treat it as a transport pipe that happens to speak git, kept as a separate concern from the version history that lives here.
-Our script will use git to tell Overleaf "hey, the graphs and tables changed, here are the newest ones", which Overleaf can then use to make a new PDF with those updated numbers.
+
+There is an exception to this: our script pushes generated tables and figures to Overleaf, since Overleaf exposes a separate git repository as the only way to deliver files into it. It should be thought of more as a transport pipe and not a second git repository.
+Overleaf can then take the new files and use them to make a pdf with new graphs and tables.
 
 
 ```text
@@ -74,7 +75,7 @@ phd-project/
 
 ## One command rebuilds everything
 
-Ideally, we should have one command that builds everything. This is to just make the whole setup easier to use, as you do not need to remember manually what scripts to run and when. You do not have some kind of hidden state that would impact the analysis code.
+Ideally, we should have one command that builds everything. This is to just make the whole setup easier to use, as you do not need to remember manually what scripts to run and when. There is no hidden state that would impact the analysis code.
 Having a single entry point in code also helps to make your analysis more deterministic. It means that given the same inputs, and same parameters, we will always get the same results.
 How to achieve this will be detailed in the coding section.
 
@@ -83,14 +84,14 @@ How to achieve this will be detailed in the coding section.
 The architecture defines what roles we have in our pipeline, but the specific tool is chosen according to situation. We try to follow the Unix philosophy of having one tool per job, and have that tool do that job well, ending up with a modular setup where each tool can be replaced later on as needed. The aim is to also use tools, that facilitate low cost of switching, instead of trying to build walls around themselves to force users to stay in an objectively worse tool.
 Optimally even the skills we use would be transferable, so that we do not need to re-learn each tool from the scratch.
 
-- **Environment slot** — must guarantee a pinned, reproducible interpreter and dependency set. This is important, so that we make it explicit what software and what versions we use, and to make it easy for somebody else to run the code. *Filled with uv → see [coding](coding.md).*
+- **Environment slot**: must guarantee a pinned, reproducible interpreter and dependency set. This is important, so that we make it explicit what software and what versions we use, and to make it easy for somebody else to run the code. *Filled with uv → see [coding](coding.md).*
 
-- **Data-store slot** — must guarantee one queryable, single-file store instead of a CSV sprawl. This will make sure that our data is cleanly stored, as well as with high performance if needed. *Filled with SQLite → see [storage](storage.md).*
+- **Data-store slot**: must guarantee one queryable, single-file store instead of a CSV sprawl. This will make sure that our data is cleanly stored, as well as with high performance if needed. *Filled with SQLite → see [storage](storage.md).*
 
-- **Analysis-code slot** — must guarantee scripted, deterministic
+- **Analysis-code slot**: must guarantee scripted, deterministic
 transformations (no clicks), but should have good support for statistical methods, libraries and external tooling, as well as be something you can write at least somewhat productively. *Filled with Python → see [coding](coding.md).*
 
-- **Manuscript slot** — must guarantee the paper consumes generated
+- **Manuscript slot**: must guarantee the paper consumes generated
 outputs, never hand-typed numbers. Manually filling tables is slow and error prone, and LaTeX documents are the norm for serious work. *Filled with Overleaf → see [manuscript pipeline](manuscript-pipeline.md).*
 
 ## Getting started: scaffold our toy project
@@ -101,7 +102,7 @@ If you see any commands, and there is no other statement, those are inputted to 
 
 Where the operating systems differ, the commands are shown in tabs — pick the **Windows** tab once and the whole site remembers your choice. Most commands (everything `git` and `uv`, for example) are identical everywhere and are shown only once, without tabs. The one naming difference to keep in mind: on Windows the project's entrypoint script is `run.ps1` instead of `run.sh` — same idea, different shell.
 
-One honest caveat: we write this course on macOS and Linux, so the Windows commands are equivalents we have not used daily ourselves. If one of them does not work, please tell us — for example by opening an issue on the course's GitHub repository — and the fix lands for every Windows user after you.
+One honest caveat: I wrote this course on macOS and Linux, so the Windows commands are equivalents I have not used daily myself. If one of them does not work, tell me by opening an issue on the course's GitHub repository.
 
 You also will need to install git, check if you have it by running `git --version`. On macOS you can install it with `brew install git`, on Debian/Ubuntu by `sudo apt install git`, and on Windows by `winget install Git.Git` (or the installer from <https://git-scm.com>).
 

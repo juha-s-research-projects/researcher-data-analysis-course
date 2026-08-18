@@ -71,8 +71,6 @@ You should start off with no extensions, to make it so that your setup is not mo
 However, over time, you might encounter some pitfalls of plain vanilla SQLite, where extensions are a handy addition.
 Below are linked a couple extensions, that I find to be well done, and useful for a particular purpose.
 
-<!-- Link list — all links checked live 2026-06-11. One-line pitches to
-     rewrite; ordering is "most likely needed first". -->
 
 - [sqlean](https://github.com/nalgeon/sqlean) — This is a curated bundle of small extensions. For researchers most importantly, it has statistics functions, like median, percentiles, standard deviations. Vanilla SQLite has only AVG/SUM/COUNT. Sqlean also has regular expressions, UUIDs and a file I/O.
 - [sqlite-zstd](https://github.com/phiresky/sqlite-zstd) — Row-level compression, stays fully queryable. Especially good for text-heavy tables. For sharing a snapshot, a plain `zstd project.sqlite` on the whole file can be used, the extension is when the working storage needs to be smaller.
