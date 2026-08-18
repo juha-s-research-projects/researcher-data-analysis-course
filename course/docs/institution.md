@@ -8,11 +8,11 @@ There are a couple offerings that could offer you help: Aalto Datahub, Aalto Tri
 
 Datahub in a Nutshell:
 
-1) Consolidates and disseminates several data sources into a single data hub
+1. Consolidates and disseminates several data sources into a single data hub
 
-2) Centralizes data acquisition including vendor negotiation and purchasing
+2. Centralizes data acquisition including vendor negotiation and purchasing
 
-3) Facilitates easy access to commercial and unique, high-quality datasets
+3. Facilitates easy access to commercial and unique, high-quality datasets
 
 Goal: Datahub enables researchers (and students) to increase their productivity by removing data-related obstacles
 
@@ -22,13 +22,13 @@ Note: Always check the license, availability, access process, and citation requi
 
 Datahub further allows researchers to promote their data-related research [here](https://datahub.aalto.fi/en/data-related-research-programs#/) which allows junior and senior researchers to: 
 
-1) Promote their work
+1. Promote their work
 
-2) Make their custom data available to other researchers (good for citations!)
+2. Make their custom data available to other researchers (good for citations!)
 
-3) Find collaborators on research projects
+3. Find collaborators on research projects
 
-4) Raise their profile.
+4. Raise their profile.
 
 ## Finance department server
 
