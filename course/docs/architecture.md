@@ -21,7 +21,7 @@ raw  ──▶  store (DB)  ──▶  outputs  ──▶  manuscript
 (immutable)  (derived)   (generated)   (downstream)
 ```
 
-## The directory layout is that dataflow made physical
+## The directory layout reflects the data flow
 
 You should make sure you construct the directory tree with intention. It will make the files easier to find, and more meaningful, as well as improve the quality of your project materially.
 We should replicate the idea of data flowing only one way in this file tree.
@@ -81,7 +81,7 @@ How to achieve this will be detailed in the coding section.
 
 ## The pluggable slots
 
-The architecture defines what roles we have in our pipeline, but the specific tool is chosen according to situation. We try to follow the Unix philosophy of having one tool per job, and have that tool do that job well, ending up with a modular setup where each tool can be replaced later on as needed. The aim is to also use tools, that facilitate low cost of switching, instead of trying to build walls around themselves to force users to stay in an objectively worse tool.
+The architecture defines what roles we have in our pipeline, but the specific tool is chosen according to situation. We try to follow the Unix philosophy of having one tool per job, and have that tool do that job well, ending up with a modular setup where each tool can be replaced later on as needed. The aim is to also use tools that facilitate low cost of switching, instead of ones that build walls around themselves to force users to stay in an objectively worse tool.
 Optimally even the skills we use would be transferable, so that we do not need to re-learn each tool from the scratch.
 
 - **Environment slot**: must guarantee a pinned, reproducible interpreter and dependency set. This is important, so that we make it explicit what software and what versions we use, and to make it easy for somebody else to run the code. *Filled with uv → see [coding](coding.md).*
@@ -100,9 +100,7 @@ We will now do an example, on how to make this project reality with a small exam
 
 If you see any commands, and there is no other statement, those are inputted to a terminal — on macOS or Linux that is the Terminal app, on Windows it is PowerShell. Using a terminal might seem scary, or labourous, but at the end of the day you will only need to know 10 or 20 commands somewhat to get around. It is easier to be precise about what to do, when using a terminal rather than a graphical user interface.
 
-Where the operating systems differ, the commands are shown in tabs — pick the **Windows** tab once and the whole site remembers your choice. Most commands (everything `git` and `uv`, for example) are identical everywhere and are shown only once, without tabs. The one naming difference to keep in mind: on Windows the project's entrypoint script is `run.ps1` instead of `run.sh` — same idea, different shell.
-
-One honest caveat: I wrote this course on macOS and Linux, so the Windows commands are equivalents I have not used daily myself. If one of them does not work, tell me by opening an issue on the course's GitHub repository.
+One honest caveat: I wrote this course on macOS and Linux, so the Windows commands are equivalents I have not used daily myself. If at some point they do not work, tell me by opening an issue on the course's GitHub repository.
 
 You also will need to install git, check if you have it by running `git --version`. On macOS you can install it with `brew install git`, on Debian/Ubuntu by `sudo apt install git`, and on Windows by `winget install Git.Git` (or the installer from <https://git-scm.com>).
 
@@ -130,14 +128,13 @@ After installing, close and reopen your terminal so the `uv` command is found. N
     git init
 
     # environment slot: uv pins interpreter + deps
-    # (SQLite needs no package — it ships with Python)
     uv init
     uv add pandas statsmodels matplotlib
 
-    # the dataflow, made physical
+    # create directories to get started in the project
     mkdir -p data/raw src outputs/figures outputs/tables paper
 
-    # the pipeline stages (empty for now; filled in later chapters)
+    # create a python file for each of the pipeline stages
     touch src/00_fetch.py src/01_load_raw.py src/02_clean.py src/03_analysis.py
 
     # the one command (stub for now)
@@ -156,24 +153,23 @@ After installing, close and reopen your terminal so the `uv` command is found. N
     git init
 
     # environment slot: uv pins interpreter + deps
-    # (SQLite needs no package — it ships with Python)
     uv init
     uv add pandas statsmodels matplotlib
 
-    # the dataflow, made physical
+    # create directories to get started in the project
     mkdir data\raw, src, outputs\figures, outputs\tables, paper
 
-    # the pipeline stages (empty for now; filled in later chapters)
+    # create empty python files to initialize the pipeline
     New-Item src\00_fetch.py, src\01_load_raw.py, src\02_clean.py, src\03_analysis.py
 
-    # the one command (stub for now; no chmod needed — Windows has no execute bit)
+    # the one command
     Set-Content run.ps1 '$ErrorActionPreference = "Stop"'
     ```
 
 Then, we will need to make a .gitignore file. This is to tell git what to have in version control, and what not. The contents will be the following at this point:
 
 ```gitignore
-# regenerable — never committed
+# regenerable, these do not end up in git.
 .venv/
 __pycache__/
 data/project.sqlite
@@ -189,7 +185,7 @@ git commit -m "initialize ignored files"
 git add src
 git commit -m "init data processing pipeline"
 
-git add run.sh                   # on Windows: git add run.ps1
+git add run.sh  # on Windows: git add run.ps1
 git commit -m "init entrypoint script"
 
 git add paper

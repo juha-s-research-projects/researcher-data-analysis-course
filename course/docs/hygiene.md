@@ -89,7 +89,7 @@ This breaks the principles of tidy data on many levels, and is quite messy to re
 
 In the following tidy version we split this to two tables. Each column is a dimension of the observation, and adding more observations always means adding more rows. The returns are also in a numeric format, so that we do not need to worry about dealing with strings or percentage conversions later on.
 
-`returns` — one row per stock per day:
+`returns`: one row per stock per day:
 
 | ticker | date       | return |
 |--------|------------|--------|
@@ -100,7 +100,7 @@ In the following tidy version we split this to two tables. Each column is a dime
 | MSFT   | 2023-02-28 | 0.011  |
 | XOM    | 2023-02-28 | 0.023  |
 
-`securities` — one row per stock (the metadata):
+`securities`: one row per stock (the metadata):
 
 | ticker | company         | sector     |
 |--------|-----------------|------------|
@@ -126,7 +126,7 @@ A name that drifts: the same concept being `subject_id` in one file, `ID` in the
 
 I recommend you to do the following:
 
-- Pick one naming convention, and stick to it, for example lowercase `snake_case`, no spaces, no special characters, ASCII only (this matters to non-coders as spaces, uppercase and unicodem ight break code, SQL, and filenames.)
+- Pick one naming convention, and stick to it, for example lowercase `snake_case`, no spaces, no special characters, ASCII only (this matters to non-coders as spaces, uppercase and unicode might break code, SQL, and filenames.)
 - One concept gets one name, everywhere and till the end of the project. If it is the same variable, it has to have the same name.
 - You can indicate units with variable names, like `weight_kg` or `returns_usd`.
 - You should document and list the exact meaning of variables and their units to your own short documentation to make it easier for others to follow along (including your future-self).
@@ -150,9 +150,10 @@ Remember that
 - The toy study (so the data choices make sense): does an industry's monthly return move with the overall market, and does the relationship change in recessions? Industry portfolio returns regressed on the market factor, recession dummy as a control. We will make the regression in a later chapter, the following example is about giving that a clean starting point.
 
 For our example, we pick three freely available sources that are from different data providers to illustrate the harmonization for real:
-    - **Fama-French 3 factors** (monthly) — Kenneth French's data library. The market return we regress on.
-    - **10 industry portfolios** (monthly) — same library. The returns we explain.
-    - **USREC** — NBER recession indicator via FRED. The control variable.
+
+- **Fama-French 3 factors** (monthly): Kenneth French's data library. The market return we regress on.
+- **10 industry portfolios** (monthly): same library. The returns we explain.
+- **USREC**: NBER recession indicator via FRED. The control variable.
 
 
 
@@ -161,12 +162,15 @@ For our example, we pick three freely available sources that are from different 
 The following examples fetch the files in code. 
 This is one way to do it, quite tedious, a more realistic way to do it would be to just go and click download, and diligently document the source upon downloading.
 After downloading, crucially also setting the file permissions to read only. Doing this in code has the benefit that the code file functions as the documentation, we do not really need a separate documentation.
-When downloading files, the most important thing is that A) you know and document where you got the files from (url and timestamp) and B) you set the files to read only as the first thing after saving them to the desired location.
+When downloading files, the most important thing is that:
+
+- you know and document where you got the files from (url and timestamp) and 
+- you set the files to read only as the first thing after saving them to the desired location.
 
 The below code does all the steps needed. Notice, that we put the raw data folder files to .gitignore: this means they are not tracked by git, and if we link the repo to somebody else, we do not accidentally redistribute the files, as with these files their licence allows free use but not redistribution. We add the script to git anyway. Remember that if you later just share your project folder as a compressed zip, the data in the raw section will be included, and thus you might redistribute the data. Make sure you have a permission to distribute it, or otherwise make sure you know what licence terms you are breaking and the risks you assume doing this.
 
 ```python
-# src/00_fetch.py  (condensed — full provenance lives in the file's docstring)
+# src/00_fetch.py
 SOURCES = {
     # name in data/raw  ->  (kind, url)
     "F-F_Research_Data_Factors.csv": ("zip", "https://mba.tuck.dartmouth.edu/...zip"),
@@ -194,7 +198,7 @@ $ uv run src/00_fetch.py && ls -l data/raw/
 -r--r--r--  1 alexis alexis  26777  USREC.csv
 ```
 
-- And `.gitignore` grows one line (data not redistributable + regenerable from the script — both reasons point the same way):
+- And `.gitignore` grows one line (derived data not redistributable + regenerable from the script):
 
 ```gitignore
 data/raw/
@@ -202,10 +206,7 @@ data/raw/
 
 ### Now look at what we actually downloaded
 
-<!-- Talking points: this is the chapter's "messy data" section made concrete.
-     Every sin below maps to a section above — name the mapping in prose. -->
-
-- These files are formatted for humans reading them on a website, not for machines. The factors file, verbatim:
+These files are formatted for humans reading them on a website, not for machines. The factors file, verbatim:
 
 ```text
 This file was created using the 202604 CRSP database.
@@ -216,10 +217,11 @@ The 1-month TBill rate data until 202405 are from Ibbotson Associates. ...
 192608,   2.64,  -1.14,   3.81,   0.25
 ```
 
-- The catalogue of sins, per file:
-    - **Factors:** prose preamble before the data; dates as `192607` (`YYYYMM`); returns in percent (`2.89` means 2.89%); and a *second* table ("Annual Factors") stacked further down in the same file.
-    - **Industry portfolios:** all of the above, plus the data is **wide** (one column per industry — one row is ten observations, not one), plus *six* tables stacked in one file (value-weighted, equal-weighted, annual, firm size, ...), plus `-99.99` / `-999` as missing-value codes.
-    - **USREC:** actually tidy (FRED is machine-friendly) — but it speaks a different dialect: dates as `1854-12-01`, a column named `USREC`. Harmless alone; a join key mismatch the moment we combine it with the French data. This is the harmonization problem in miniature.
+The catalogue of what will cause problems, per file:
+
+- **Factors:** the header text before the data, dates as `192607` (`YYYYMM`), returns in percent (`2.89` means 2.89%), and a *second* table ("Annual Factors") stacked in the same file
+- **Industry portfolios:** all of the above, plus the data is **wide** (one column per industry which means that one row is ten observations instead of one), and six(!) tables stacked in one file (value-weighted, equal-weighted, annual, firm size, ...), as well as `-99.99` / `-999` as missing-value codes.
+- **USREC:** is actually tidy (FRED is machine-friendly) from the get-go but it speaks a different dialect: dates as `1854-12-01` with a column named `USREC`. This is pretty harmless, a small harmonization problem in miniature.
 
 ### Let's load the data
 
