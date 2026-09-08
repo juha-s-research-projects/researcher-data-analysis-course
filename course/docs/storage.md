@@ -107,9 +107,9 @@ pd.read_sql("""
     GROUP BY industry
     ORDER BY industry
 """, con)
-#   Durbl  -0.0025  0.0146     <- most industries flip negative in recessions —
-#   Enrgy  -0.0049  0.0135        a first taste of what the regression will
-#   Hlth    0.0071  0.0113        formalize in a later chapter
+#   Durbl  -0.0025  0.0146 
+#   Enrgy  -0.0049  0.0135     
+#   Hlth    0.0071  0.0113       
 #   ...
 ```
 
