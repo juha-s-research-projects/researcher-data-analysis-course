@@ -65,7 +65,7 @@ The four principles stay the same in different languages, but the tools might ch
 
 ```bash
 # declare + lock + pin + isolate, in four commands
-uv init
+uv init --no-package                           # plain scripts, not an installable package
 uv add pandas statsmodels matplotlib          # declares + locks (SQLite is stdlib)
 uv run src/01_load_raw.py                      # runs inside the pinned env
 ```

@@ -126,7 +126,7 @@ After installing, close and reopen your terminal so the `uv` command is found. N
     git init
 
     # environment slot: uv pins interpreter + deps
-    uv init
+    uv init --no-package   # plain scripts in src/, not an installable package
     uv add pandas statsmodels matplotlib
 
     # create directories to get started in the project
@@ -150,7 +150,7 @@ After installing, close and reopen your terminal so the `uv` command is found. N
     git init
 
     # environment: uv pins interpreter + deps
-    uv init
+    uv init --no-package   # plain scripts in src/, not an installable package
     uv add pandas statsmodels matplotlib
 
     # create directories to get started in the project

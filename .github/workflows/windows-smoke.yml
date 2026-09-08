@@ -29,7 +29,7 @@ jobs:
         run: |
           mkdir phd-project; cd phd-project
           git init
-          uv init
+          uv init --no-package   # uv >= 0.12 defaults to a packaged src/ layout; we want plain scripts
           uv add pandas statsmodels matplotlib
           mkdir data\raw, src, outputs\figures, outputs\tables, paper
           New-Item src\00_fetch.py, src\01_load_raw.py, src\02_clean.py, src\03_analysis.py
