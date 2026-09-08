@@ -1,6 +1,6 @@
 # Manuscript pipeline
 
-!!! note "Optional — this example uses Overleaf, but is mainly an example how to handle the manuscript part"
+!!! note "Optional: this example uses Overleaf, but is mainly an example how to handle the manuscript part"
     You can use other products than Overleaf or Zotero, and probably even have a nicer setup,
     but this is an example of what kind of shape you should have in your pipeline.
 
@@ -12,13 +12,13 @@ This will make sure that you cite the right things, the right way, whilst minimi
 
 In this chapter, we present an example setup with Zotero, Overleaf, and Git.
 
-## The reference setup: Zotero → `references.bib`
+## The reference setup: Zotero creates `references.bib`
 
 Zotero is a career-wide library, but you can there organize reference papers into folder. There, it is also easy to save any papers as PDF next to the Zotero entry to quickly find the right file for the right paper when you want to revisit it and check something.
 The paper PDFs should not live in a project folder, because that makes the git repository unnecessarily heavy. 
 But an exported references.bib should be in your git repository, and you should use Better BibTeX to keep it auto-exported and to have stable citation keys.
 
-## The manuscript transport: Overleaf via its git bridge
+## From our computer to Overleaf via its git bridge
 
 Overleaf uses git to transport files from your machine to an Overleaf project. As we have a version control system already, we only use it in this example for delivery. Overleaf has its own git repository in addition to our main repository.
 `run.sh` writes all the freshly generated figures and tables to `paper/`, does a `git push` to the Overleaf remote.
@@ -30,7 +30,7 @@ Then, Overleaf recompiles and you can download the updated PDF. If there are any
 There is a possibility to have a cleaner local-only setup, where you compile the LaTeX yourself with `latexmk`. With this you do not need the git bridge to Overleaf, it just becomes a local build and you do not need to change anything.
 
 
-## A taste
+## A small example
 
 === "macOS / Linux"
 
@@ -38,7 +38,7 @@ There is a possibility to have a cleaner local-only setup, where you compile the
     # in run.sh, after the analysis has written outputs/ ...
     cp outputs/figures/*.pdf paper/figures/
     cp outputs/tables/*.tex  paper/tables/
-    git -C paper push overleaf main      # deliver to Overleaf; it recompiles
+    git -C paper push overleaf main      #deliver to Overleaf for recompilation
     ```
 
 === "Windows"
@@ -47,10 +47,8 @@ There is a possibility to have a cleaner local-only setup, where you compile the
     # in run.ps1, after the analysis has written outputs/ ...
     Copy-Item outputs/figures/*.pdf paper/figures/
     Copy-Item outputs/tables/*.tex  paper/tables/
-    git -C paper push overleaf main      # deliver to Overleaf; it recompiles
+    git -C paper push overleaf main      #deliver to Overleaf for recompilation
     ```
-
-- (Plus: a screenshot or two — Better BibTeX auto-export setting; the Overleaf "Git" menu giving you the remote URL.)
 
 ## Additional information
 

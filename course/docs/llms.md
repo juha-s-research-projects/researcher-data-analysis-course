@@ -29,7 +29,7 @@ Following list of examples are uses where an LLM will probably bite at some poin
 
 - You should work by committing code one by one, structured in logical changes. This helps you go back in case something breaks down. The chats you might have had, should not be recorded, the output is the artefact.
 - Most often when working with LLMs the prompt will not become better by pasting raw data, but rather giving the schema of the data (data types, column names etc.) Easy habit to pick up that helps when you are working with data that should be kept private.
-- Plan first, generate code only then. LLMs make silent assumptions on things you do not explicitly tell them to do about your code, which is where you might have differing expectations from the code outputted.
+- You should first plan in detail, and generate code only after that. LLMs make silent assumptions on things you do not explicitly tell them to do about your code, which is where you might have differing expectations from the code outputted.
 - Use claude code, openai codex or the like. Context and execution capabilities are crucial to have, and LLMs are pretty good at looping until they get something right. You should give them that ability
 - Use Andrej Karpathy inspired [claude.md](https://github.com/multica-ai/andrej-karpathy-skills/blob/main/CLAUDE.md) (can be used with other LLMs as well, not just claude) to make your LLM behave a bit better as a "system prompt".
 

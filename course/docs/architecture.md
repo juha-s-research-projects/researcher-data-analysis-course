@@ -41,17 +41,17 @@ Overleaf can then take the new files and use them to make a pdf with new graphs 
 
 ```text
 phd-project/
-├── README.md                  # what this is, how to run it, in 10 lines
+├── README.md                  # what this is, how to run it, concisely
 ├── pyproject.toml             # declared dependencies + project metadata
 ├── uv.lock                    # exact, fully pinned dependency graph
 ├── .python-version            # pinned interpreter (e.g. 3.13)
 ├── .gitignore                 # ignores the venv, caches, build artefacts from git
-├── run.sh                     # ONE command: env → db → analysis → outputs
+├── run.sh                     # runs the chain of env → db → analysis → outputs
 │
 ├── data/
-│   ├── raw/                   # immutable, read-only, NEVER hand-edited
-│   │   └── survey_2024.csv    #   (the only true source of data)
-│   └── project.sqlite         # single-file database: clean + derived tables
+│   ├── raw/                   # the whole folder and its contents are immutable, read-only, NEVER hand-edited
+│   │   └── survey_2024.csv    #  (the only true source of data)
+│   └── project.sqlite         # single-file database
 │
 ├── src/
 │   ├── 00_fetch.py            # download the raw data → data/raw/, then freeze it
@@ -66,7 +66,7 @@ phd-project/
 ├── paper/                     # the manuscript (downstream)
 │   ├── main.tex
 │   ├── references.bib         # exported from your career-wide Zotero;
-│   │                          #   the ONLY reference artifact in the repo
+│   │                          #   this is the only reference artifact in the repo to keep it cleaner
 │   ├── figures/
 │   └── tables/
 │
@@ -79,32 +79,30 @@ Ideally, we should have one command that builds everything. This is to just make
 Having a single entry point in code also helps to make your analysis more deterministic. It means that given the same inputs, and same parameters, we will always get the same results.
 How to achieve this will be detailed in the coding section.
 
-## The pluggable slots
+## The needed components
 
 The architecture defines what roles we have in our pipeline, but the specific tool is chosen according to situation. We try to follow the Unix philosophy of having one tool per job, and have that tool do that job well, ending up with a modular setup where each tool can be replaced later on as needed. The aim is to also use tools that facilitate low cost of switching, instead of ones that build walls around themselves to force users to stay in an objectively worse tool.
 Optimally even the skills we use would be transferable, so that we do not need to re-learn each tool from the scratch.
 
-- **Environment slot**: must guarantee a pinned, reproducible interpreter and dependency set. This is important, so that we make it explicit what software and what versions we use, and to make it easy for somebody else to run the code. *Filled with uv → see [coding](coding.md).*
+- **Environment**: We should have some kind of tool that guarantees a pinned, reproducible interpreter and dependency set. This is important, so that we make it explicit what software and what versions we use, and to make it easy for somebody else to run the code. This reduces headaches dramatically. *I recommend uv → see [coding](coding.md).*
 
-- **Data-store slot**: must guarantee one queryable, single-file store instead of a CSV sprawl. This will make sure that our data is cleanly stored, as well as with high performance if needed. *Filled with SQLite → see [storage](storage.md).*
+- **Data-store**: Our data storage should be one queryable (for performance and data integrity), single-file store (for simplicity one, not multiple files) instead of the classic CSV sprawl. Using an approach like this will make sure that the data is cleanly stored, as well as can be used with decent performance if needed. *Filled with SQLite → see [storage](storage.md).*
 
-- **Analysis-code slot**: must guarantee scripted, deterministic
-transformations (no clicks), but should have good support for statistical methods, libraries and external tooling, as well as be something you can write at least somewhat productively. *Filled with Python → see [coding](coding.md).*
+- **Analysis-code**: We need to pick something that does the analysis. It should be something that can do scripted, deterministic transformations (with no manual clicks), but should have good support for statistical methods, libraries and external tooling, as well as be something you can write at least somewhat productively. Common options for scientific work nowadays are Python, R, Julia. *We picked Python → see [coding](coding.md).*
 
-- **Manuscript slot**: must guarantee the paper consumes generated
-outputs, never hand-typed numbers. Manually filling tables is slow and error prone, and LaTeX documents are the norm for serious work. *Filled with Overleaf → see [manuscript pipeline](manuscript-pipeline.md).*
+- **Manuscript**: We need something that makes it such that a paper takes as inputs the outputs of the code (statistical analysis) and relieves us of hand typing numbers in. Manually typing the numbers is slow, error prone, and LaTeX documents are anyway the expected norm for serious work. *We picked Overleaf → see [manuscript pipeline](manuscript-pipeline.md).*
 
-## Getting started: scaffold our toy project
+## Getting started with the toy project
 
 We will now do an example, on how to make this project reality with a small example you can follow along if you are interested.
 
 If you see any commands, and there is no other statement, those are inputted to a terminal — on macOS or Linux that is the Terminal app, on Windows it is PowerShell. Using a terminal might seem scary, or labourous, but at the end of the day you will only need to know 10 or 20 commands somewhat to get around. It is easier to be precise about what to do, when using a terminal rather than a graphical user interface.
 
-One honest caveat: I wrote this course on macOS and Linux, so the Windows commands are equivalents I have not used daily myself. If at some point they do not work, tell me by opening an issue on the course's GitHub repository.
+I wrote this course on macOS and Linux, so the Windows commands are equivalents I have not used daily myself. If at some point they do not work, please tell me by opening an issue on the course's GitHub repository.
 
 You also will need to install git, check if you have it by running `git --version`. On macOS you can install it with `brew install git`, on Debian/Ubuntu by `sudo apt install git`, and on Windows by `winget install Git.Git` (or the installer from <https://git-scm.com>).
 
-The other tool to install is uv, which manages Python and the project's packages for us (the [coding](coding.md) chapter explains why). Check if you have it with `uv --version`, and if not, install it with the official one-liner:
+The other tool to install is uv, which manages Python and the project's packages for us (the [coding](coding.md) chapter explains why). Check if you have it with `uv --version`, and if not, install it with:
 
 === "macOS / Linux"
 
@@ -118,7 +116,7 @@ The other tool to install is uv, which manages Python and the project's packages
     powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
     ```
 
-After installing, close and reopen your terminal so the `uv` command is found. Now we can scaffold the project:
+After installing, close and reopen your terminal so the `uv` command is found. Now we can implement the folder structures and outlines for the project:
 
 === "macOS / Linux"
 
@@ -137,7 +135,6 @@ After installing, close and reopen your terminal so the `uv` command is found. N
     # create a python file for each of the pipeline stages
     touch src/00_fetch.py src/01_load_raw.py src/02_clean.py src/03_analysis.py
 
-    # the one command (stub for now)
     printf '#!/usr/bin/env bash\nset -euo pipefail\n' > run.sh
     chmod +x run.sh
     ```
@@ -152,7 +149,7 @@ After installing, close and reopen your terminal so the `uv` command is found. N
     mkdir phd-project; cd phd-project
     git init
 
-    # environment slot: uv pins interpreter + deps
+    # environment: uv pins interpreter + deps
     uv init
     uv add pandas statsmodels matplotlib
 
@@ -162,7 +159,6 @@ After installing, close and reopen your terminal so the `uv` command is found. N
     # create empty python files to initialize the pipeline
     New-Item src\00_fetch.py, src\01_load_raw.py, src\02_clean.py, src\03_analysis.py
 
-    # the one command
     Set-Content run.ps1 '$ErrorActionPreference = "Stop"'
     ```
 

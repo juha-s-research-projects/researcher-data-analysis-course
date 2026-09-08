@@ -1,7 +1,7 @@
 # Coding
 
 This is not a programming tutorial. We will just go over the minimum, most impactful software engineering tips that will make your life easier when making research pipelines.
-There are four non-negotiable habits and the environment, when writing your own pipelines.
+When writing your own pipelines, there are four things that reduce headaches which should be used.
 
 ## Scripts over clicks
 
@@ -20,7 +20,7 @@ You should always have scripts for any kind of pipeline. A notebook is fine for 
 
 ## Use variables to your advantage
 
-Instead of having `df[df.score > 0.85]`, it is way clearer to have `INCLUSION_THRESHOLD = 0.85  # pre-registered cutoff, see protocol §3`, and later `df[df.score > INCLUSION_THRESHOLD]`.
+Instead of having `df[df.score > 0.85]`, it is way clearer to have `INCLUSION_THRESHOLD = 0.85`, and later `df[df.score > INCLUSION_THRESHOLD]`.
 Future you and other people will read the code and instantly understand what the point is.
 
 ## Functions and strong typing

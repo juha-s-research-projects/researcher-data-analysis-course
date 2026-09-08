@@ -3,13 +3,13 @@
 In the storage chapter, we got a single-file contained queryable store.
 SQL is the language for querying it, and communicating to the machine what and how you want data fetched.
 This skill is very transferable: in any real world data work, where we are not playing around but have actually big volumes of data, knowing some SQL is mandatory.
-This small, stable language has outlived all tools it runs on. It first appeared in 1973, and was standardised in 1986 by ANSI and 1987 by ISO.
+The language is small, has been around for ages, and is stable. It first appeared in 1973, and was standardised in 1986 by ANSI and 1987 by ISO.
 In enterprise transactional workloads, and analytics workloads, a rough estimate of its popularity could be perhaps around 80% (this number is very difficult to approximate, take it with a pinch of salt. the point is that it is the dominant, most popular, standard choice).
 
-Whenever you build a pivot table or a vlookup in your favourite spreadsheet software, you have already had the same mental model as SQL. SQL is just saying it precisely, and with the added benefit that in program code, the statements remain as artefacts for later.
+Whenever you build a pivot table or a vlookup in your favourite spreadsheet software, you already think in the same way as SQL. SQL is just saying it precisely, and with the added benefit that in program code, the statements remain as artefacts for later.
 You do not need to learn a language, or to learn how to program, to use SQL. By learning what five, pretty descriptively named verbs do, you already can read and understand 90% of SQL statements written by others. By having a cheat sheet and nice resources, you can also write your own SQL queries when needed. The language itself is tiny, and the same statements work across SQLite, Postgres, and many other databases.
 
-## Pivot tables and VLOOKUP were always trying to be these
+## SQL is what pivot tables and VLOOKUP are trying to be
 
 SQL is superior to a spreadsheet having a chain of vlookups, as the programmatic version can be more easily audited. A spreadsheet might after a data update have half of the vlookups point to wrong rows
 A pivot table needs to be rebuilt by hand every time data changes.
@@ -18,7 +18,7 @@ You can see that the solutions made by those are inherently fragile, as well as 
 The core idea with SQL is that it is declarative, meaning you describe what you want, say "average score per country, for adults". It is then the job of the database to figure out how to get it. The same query can be re-run on new data, and it just works, and there is no manual rebuild. 
 
 
-## The core five verbs that cover around 90% of research needs
+## Five verbs you need for 90% of your work
 
 - `SELECT`: pick columns (and compute new ones).
 - `WHERE`: keep only the rows you want (filter).
@@ -71,7 +71,7 @@ This statement *alters* the table structure in a profound way. It adds a new col
 This statement drops (**deletes**) a table (and its data) completely!
 
 
-## Indices: same queries, but sped up
+## Indices: make queries quicker
 
 An index is an internal structure the database keeps to speed up queries, a bit like a book has a table of contents with page numbers, allowing you to find a section without reading through everything.
 It can be created once, and the database keeps it up to date and uses automatically.
@@ -84,7 +84,7 @@ There are costs with adding indices: inserts get slower and file size increases.
 
 The above statement makes it quicker to filter countries on population.
 
-## Joins: the thing spreadsheets do badly
+## Joins
 
 If you follow the principles outlined in [hygiene](hygiene.md), there should always be one kind of unit per table. Joins are how we put them back together when we need, by key, instead of having everything in one giant sheet, denormalized.
 It is good to know that **inner** join keeps only matched rows, whilst **left** join keeps every row on the left, even when there is no match (there are nulls). This is an answer to many "where did my rows go?" type of bugs that arise from using the wrong kind of join.
@@ -112,7 +112,7 @@ Anywhere where we could put a value/number we can put a select statement.
 You could in theory make deep nested statements, but of then this is not wise, as they are somewhat more difficult to read beyond one deep nests.
 Multiple, smaller statements often beat a gigantic statement. They are similar amount of work to write, but are way easier to read, which is the most important thing about program code.
 
-## Where SQL ends (and Python takes over)
+## Where SQL ends
 
 SQL is unbeatable for data work based on sets: filter, group, join, aggregate, reshape etc.
 But SQL is not really the best choice for statistical modelling, like regressions, plots and so on. You should use Python, R, Julia, or something else for that.
@@ -123,9 +123,9 @@ In my opinion, the sanest way to divide responsibilities is to have SQL shape th
 Here is a list of links for further study. I recommend very very strongly to spend some time practicing SQL queries if they are not familiar to you, even in the LLM age. Take one week, where you spend one or two hours per working day on these, and these will be easy after that.
 
 
-- [SQLBolt](https://sqlbolt.com) — interactive lessons in the browser. Start by practicing the five verbs here first.
-- [Select Star SQL](https://selectstarsql.com) — a free interactive book that teaches SQL by analyzing a real dataset. This is close in spirit to research work, continue here.
-- [SQL Murder Mystery](https://mystery.knightlab.com) — practice disguised as a detective game; joins and filters to catch a killer. Use this if you'd like to have some more dopamine whilst practicing.
-- [SQLite's SQL documentation](https://sqlite.org/lang.html) — the reference for the exact dialect the course store speaks; where to check syntax once you're writing your own. This is the user manual.
-- [Use The Index, Luke](https://use-the-index-luke.com) — if indices made you curious, this is the friendly book-length treatment of how databases actually find rows.
-- [SQL Style Guide](https://www.sqlstyle.guide) — one sensible convention for formatting queries, for when your statements start living in version-controlled pipelines.
+- [SQLBolt](https://sqlbolt.com)
+- [Select Star SQL](https://selectstarsql.com)
+- [SQL Murder Mystery](https://mystery.knightlab.com)
+- [SQLite's SQL documentation](https://sqlite.org/lang.html)
+- [Use The Index, Luke](https://use-the-index-luke.com)
+- [SQL Style Guide](https://www.sqlstyle.guide)

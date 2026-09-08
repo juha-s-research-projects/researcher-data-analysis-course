@@ -84,9 +84,8 @@ Is there a better way?
 
 ## The better way
 
-The same project, structured so that one command rebuilds everything from the
-immutable raw data — and a reviewer's "remove two outliers" is a one-line change,
-not a week of manual surgery:
+Here is an example of the same project, but done in an alternative way.
+In this example, rebuilding everything is done with a single command, and removing two outliers as asked by the reviewer is a matter of changing one line in the code.
 
 ```text
 phd-project/
@@ -95,24 +94,24 @@ phd-project/
 ├── uv.lock                    # exact, fully pinned dependency graph
 ├── .python-version            # pinned interpreter (e.g. 3.13)
 ├── .gitignore                 # ignores the venv, caches, build artefacts
-├── run.sh                     # ONE command: env → db → analysis → outputs
+├── run.sh                     # with one command does the whole sequence of env → db → analysis → outputs
 │
 ├── data/
-│   ├── raw/                   # immutable, read-only, NEVER hand-edited
+│   ├── raw/                   # immutable, read-only, not hand-edited
 │   │   └── survey_2024.csv    #   (the only true source of data)
-│   └── project.sqlite         # single-file database: clean + derived tables
+│   └── project.sqlite         # a clean, one file database for all your data
 │
 ├── src/
 │   ├── 00_fetch.py            # download the raw data → data/raw/, then freeze it
 │   ├── 01_load_raw.py         # data/raw/*  →  project.sqlite
-│   ├── 02_clean.py            # cleaning steps, in code, reproducible
+│   ├── 02_clean.py            # cleaning steps as code
 │   └── 03_analysis.py         # regressions → writes tables + figures
 │
 ├── outputs/                   # 100% generated, safe to delete & rebuild
 │   ├── figures/
 │   │   └── fig1_effect.pdf
 │   └── tables/
-│       └── tab1_summary.tex   # \input-able LaTeX, no hand-typed numbers
+│       └── tab1_summary.tex   # full latex output for a table, no hand written numbers
 │
 ├── paper/                     # git-synced to Overleaf
 │   ├── main.tex

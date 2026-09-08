@@ -1,14 +1,14 @@
 # Version control
 
-Git is the best cure for the file-naming horror from index.md. This chapter gives a short introduction to using version control.
+Git is the best solution for avoiding the mess that we introduced in the beginning. This chapter gives a short introduction to using version control.
 Thanks to git, we can know who changed what, when and why, and how to go back.
 
-## git is memory and provenance (the cure for `final_v2_FINAL`)
+## Avoiding `final_v2_FINAL`
 
-Many people might do version control by filename and end up with files like `analysis_version-2-final-FINAL (1)_use-this-one.xlsx`. This is not good, as you will have too many files unnecessarily and you will be unsure what the last version was. You might not even be able to go back in time when you want to. Git is a more efficient way to do that, as it gives a complete, attributable and reversible history.
+Many people might do version control by filename and end up with files like `analysis_version-2-final-FINAL (1)_use-this-one.xlsx`. This is not good, as you will have too many files unnecessarily and you will be unsure what the last version was. You might not even be able to go back in time when you want to. Git is a more efficient way to do that, as it gives a well structured, documented history where you can roll back if needed.
 You might think it is a developer tool, but it should be used by others as well. 
 
-## What belongs in git — and what does not
+## What belongs in git and what does not
 
 You should keep in git small text files that describe how to build everything, like source code, lock files, version files, gitignore files, shell scripts, tex code, references, readmes, and configuration files.
 Big raw data dumps do not belong to git, as git is built for small text and not for large binaries. Git will slow down with bigger files. Raw data should be archived and governed elsewhere, and raw data files should be added to .gitignore as entries, that tell git to not track them.
@@ -22,24 +22,18 @@ If you use git properly, a year from now you can do `git log` and read through t
 
 ## Data versioning
 
-"Should I version my data in git too?"
-
 Most often not. Git is intended for text and code, raw data should be immutable anyway and the point of git is version control.
 If you need versioned datasets, you can use git-LFS, git-annex and DVC. Remember that you can also add metadata to your DB like timestamps of download to each dataset.
 
 
-## The Overleaf exception (same story as architecture + manuscript-pipeline)
-
-The `run.sh` does a `git push` to Overleaf, but Overleaf is not a second version control system. Overleaf just exposes git as the only way to push artefacts to it. It should be thought of as a transport pipe that speaks git.
-
-## A taste
+## A small example
 
 ```bash
 git init
 git add src/02_clean.py
 git commit -m "Drop two pre-registered outliers (protocol §3)"
 
-git log --oneline        # the research log, at a glance
+git log --oneline        # look at your research log that you've built by using git
 git revert <commit>      # undo a change without erasing history
 ```
 The most typical workflow will look something like this: `git init` on the very first time to make the folder you are in, a git repository.
@@ -58,14 +52,14 @@ Each line is its own entry:
 docs/
 .env
 *.log
-scratchpad/embarrassing.md
+scratchpad/embarrassing_thing_you_dont_want_others_to_read.md
 ```
 
 The above are some example entries for .gitignore, read more here:
 
-- [The official .gitignore reference](https://git-scm.com/docs/gitignore) — complete syntax for gitignore (wildcards, negation with `!`, directory-only rules).
-- [Atlassian's .gitignore tutorial](https://www.atlassian.com/git/tutorials/saving-changes/gitignore) — a gentle walkthrough of the first one
-- [github/gitignore](https://github.com/github/gitignore) — ready-made templates per language/tool
+- [The official .gitignore reference](https://git-scm.com/docs/gitignore)
+- [Atlassian's .gitignore tutorial](https://www.atlassian.com/git/tutorials/saving-changes/gitignore)
+- [github/gitignore](https://github.com/github/gitignore)
 
 ## Remotes and branches
 
@@ -97,12 +91,12 @@ git pull                         # bring a co-author's commits down
 git switch -c reviewer2-robustness   # create + switch to a new branch
 # ...edit, run, commit as usual...
 git switch main                  # back to the safe version
-git merge reviewer2-robustness   # keep the experiment (it worked)
+git merge reviewer2-robustness   # keep the experiment (since it worked)
 git branch -d reviewer2-robustness   # tidy up the label afterwards
 ```
 
 ## Additional materials
 
-- [Software Carpentry: Version Control with Git](https://swcarpentry.github.io/git-novice/) — intro course for git.
-- [Learn Git Branching](https://learngitbranching.js.org) — an interactive, visual sandbox for practicing branches and remotes in the browser. Makes the whole logic click easily.
-- [Oh Shit, Git!?!](https://ohshitgit.com) — short recipes for the most common "I broke something" moments, in plain language. This is worth bookmarking.
+- [Software Carpentry: Version Control with Git](https://swcarpentry.github.io/git-novice/)
+- [Learn Git Branching](https://learngitbranching.js.org)
+- [Oh Shit, Git!?!](https://ohshitgit.com)
